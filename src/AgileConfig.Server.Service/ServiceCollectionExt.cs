@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using AgileConfig.Server.IService;
 using AgileConfig.Server.Service.EventRegisterService;
+using AgileConfig.Server.SyncPlugin;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AgileConfig.Server.Service;
@@ -33,5 +34,8 @@ public static class ServiceCollectionExt
         sc.AddScoped<ConfigStatusUpdateEventHandlersRegister>();
         sc.AddScoped<ServiceInfoStatusUpdateEventHandlersRegister>();
         sc.AddScoped<SystemEventHandlersRegister>();
+
+        // SyncPlugin services
+        sc.AddSyncPlugin();
     }
 }

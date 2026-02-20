@@ -27,11 +27,11 @@ public class ConfigSyncService
         var context = new SyncContext
         {
             AppId = config.AppId,
-            AppName = config.AppName ?? "",
+            AppName = config.AppId,
             Env = env,
             Key = config.Key,
             Value = config.Value ?? "",
-            Group = config.GroupName,
+            Group = config.Group,
             OperationType = operationType,
             Timestamp = DateTimeOffset.UtcNow
         };
@@ -68,11 +68,11 @@ public class ConfigSyncService
         var contexts = configs.Select(c => new SyncContext
         {
             AppId = c.AppId,
-            AppName = c.AppName ?? "",
+            AppName = c.AppId,
             Env = env,
             Key = c.Key,
             Value = c.Value ?? "",
-            Group = c.GroupName,
+            Group = c.Group,
             OperationType = SyncOperationType.Add,
             Timestamp = DateTimeOffset.UtcNow
         }).ToList();

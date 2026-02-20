@@ -83,7 +83,7 @@ public class SyncEngine : IDisposable
     {
         var tasks = _plugins.Values
             .Where(p => IsPluginEnabled(p.Name))
-            .Select(p => SafeExecuteAsync(p.SyncAsync(context)));
+            .Select(p => SafeExecuteAsync(() => p.SyncAsync(context)));
 
         var results = await Task.WhenAll(tasks);
         
@@ -113,7 +113,7 @@ public class SyncEngine : IDisposable
 
         var tasks = _plugins.Values
             .Where(p => IsPluginEnabled(p.Name))
-            .Select(p => SafeExecuteAsync(p.SyncBatchAsync(contextList)));
+            .Select(p => SafeExecuteAsync(() => p.SyncBatchAsync(contextList)));
 
         var results = await Task.WhenAll(tasks);
 
@@ -137,7 +137,7 @@ public class SyncEngine : IDisposable
     {
         var tasks = _plugins.Values
             .Where(p => IsPluginEnabled(p.Name))
-            .Select(p => SafeExecuteAsync(p.DeleteAsync(context)));
+            .Select(p => SafeExecuteAsync(() => p.DeleteAsync(context)));
 
         var results = await Task.WhenAll(tasks);
 

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using AgileConfig.Server.Common.EventBus;
 using AgileConfig.Server.Data.Entity;
 using AgileConfig.Server.Event;

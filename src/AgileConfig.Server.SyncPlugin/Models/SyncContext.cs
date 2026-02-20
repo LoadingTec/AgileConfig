@@ -1,4 +1,4 @@
-namespace AgileConfig.Server.SyncPlugin;
+namespace AgileConfig.Server.SyncPlugin.Models;
 
 /// <summary>
 /// Result of sync plugin operation

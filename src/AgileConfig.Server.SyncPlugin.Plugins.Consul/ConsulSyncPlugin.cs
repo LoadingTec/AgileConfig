@@ -63,7 +63,7 @@ public class ConsulSyncPlugin : ISyncPlugin
                 Value = System.Text.Encoding.UTF8.GetBytes(value)
             };
 
-            await _client.KV.Set(kvp);
+            await _client.KV.Put(kvp);
             _logger.LogInformation("Synced config {Key} to Consul", key);
 
             return new SyncPluginResult { Success = true, Message = $"Synced to {key}" };
@@ -79,17 +79,16 @@ public class ConsulSyncPlugin : ISyncPlugin
     {
         try
         {
-            var tasks = contexts.Select(async context =>
+            foreach (var context in contexts)
             {
                 var key = BuildKey(context);
                 var kvp = new KVPair(key)
                 {
                     Value = System.Text.Encoding.UTF8.GetBytes(context.Value)
                 };
-                await _client.KV.Set(kvp);
-            });
-
-            await Task.WhenAll(tasks);
+                await _client.KV.Put(kvp);
+            }
+            
             _logger.LogInformation("Batch synced {Count} configs to Consul", contexts.Count());
 
             return new SyncPluginResult { Success = true, Message = "Batch sync completed" };

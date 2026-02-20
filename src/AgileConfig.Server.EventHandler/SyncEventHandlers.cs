@@ -52,11 +52,11 @@ public class ConfigSyncEventHandler : IEventHandler<PublishConfigSuccessful>
             var contexts = configs.Select(c => new SyncContext
             {
                 AppId = c.AppId,
-                AppName = c.AppName ?? "",
+                AppName = timeline.AppId, // Use AppId as AppName since ConfigPublished doesn't have AppName
                 Env = c.Env,
                 Key = c.Key,
                 Value = c.Value ?? "",
-                Group = c.GroupName,
+                Group = c.Group,
                 OperationType = SyncOperationType.Add,
                 Timestamp = DateTimeOffset.UtcNow
             }).ToList();
@@ -111,11 +111,11 @@ public class ConfigDeleteSyncEventHandler : IEventHandler<DeleteConfigSuccessful
             var context = new SyncContext
             {
                 AppId = evtInstance.Config.AppId,
-                AppName = evtInstance.Config.AppName ?? "",
+                AppName = evtInstance.Config.AppId, // Use AppId as AppName
                 Env = evtInstance.Config.Env,
                 Key = evtInstance.Config.Key,
                 Value = "",
-                Group = evtInstance.Config.GroupName,
+                Group = evtInstance.Config.Group,
                 OperationType = SyncOperationType.Delete,
                 Timestamp = DateTimeOffset.UtcNow
             };

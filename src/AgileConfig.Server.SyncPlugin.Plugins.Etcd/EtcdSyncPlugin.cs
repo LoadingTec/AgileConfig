@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using AgileConfig.Server.SyncPlugin;
 using AgileConfig.Server.SyncPlugin.Models;
+using dotnet_etcd;
 
 namespace AgileConfig.Server.SyncPlugin.Plugins.Etcd;
 
@@ -12,8 +13,8 @@ public class EtcdSyncPlugin : ISyncPlugin
 {
     private readonly ILogger<EtcdSyncPlugin> _logger;
     private SyncPluginConfig? _config;
+    private EtcdClient? _client;
     private string _keyPrefix = "/agileconfig";
-    private string _endpoints = "";
 
     public string Name => "etcd";
     public string DisplayName => "Etcd";
@@ -30,13 +31,12 @@ public class EtcdSyncPlugin : ISyncPlugin
         {
             _config = config;
 
-            _endpoints = config.Settings.GetValueOrDefault("endpoints", "http://localhost:2379");
+            var endpoints = config.Settings.GetValueOrDefault("endpoints", "http://localhost:2379");
             _keyPrefix = config.Settings.GetValueOrDefault("keyPrefix", "/agileconfig");
 
-            _logger.LogInformation("Initializing Etcd plugin with endpoints: {Endpoints}", _endpoints);
+            _logger.LogInformation("Initializing Etcd plugin with endpoints: {Endpoints}", endpoints);
 
-            // Note: EtcdClient initialization would go here in production
-            // For now, we just store the config
+            _client = new EtcdClient(endpoints);
 
             return Task.FromResult(new SyncPluginResult { Success = true, Message = "Initialized" });
         }
@@ -62,19 +62,25 @@ public class EtcdSyncPlugin : ISyncPlugin
         {
             var appId = contexts[0].AppId;
             var env = contexts[0].Env;
+            var prefix = $"{_keyPrefix}/{appId}/{env}/";
 
-            // TODO: Implement actual etcd sync
-            // 1. Connect to etcd using _endpoints
-            // 2. Delete all keys with prefix _keyPrefix/appId/env/
-            // 3. Insert all contexts as new keys
+            // Delete all existing keys with prefix
+            _client.Delete(prefix);
 
-            _logger.LogInformation("Etcd sync: Would sync {Count} configs for app {AppId} env {Env}", 
+            // Insert all new configs
+            foreach (var context in contexts)
+            {
+                var key = BuildKey(context);
+                _client.Put(key, context.Value);
+            }
+
+            _logger.LogInformation("Synced {Count} configs to etcd for app {AppId} env {Env}", 
                 contexts.Length, appId, env);
 
             return Task.FromResult(new SyncPluginResult 
             { 
                 Success = true, 
-                Message = $"Would sync {contexts.Length} configs" 
+                Message = $"Synced {contexts.Length} configs" 
             });
         }
         catch (Exception ex)
@@ -97,5 +103,11 @@ public class EtcdSyncPlugin : ISyncPlugin
     {
         _logger.LogInformation("Etcd plugin shutdown");
         return Task.CompletedTask;
+    }
+
+    private string BuildKey(SyncContext context)
+    {
+        var group = string.IsNullOrEmpty(context.Group) ? "default" : context.Group;
+        return $"{_keyPrefix}/{context.AppId}/{context.Env}/{group}/{context.Key}";
     }
 }

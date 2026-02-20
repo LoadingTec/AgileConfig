@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using AgileConfig.Server.SyncPlugin;
 using AgileConfig.Server.SyncPlugin.Models;
-using dotnet.etcd;
+using Etcd.Client;
 
 namespace AgileConfig.Server.SyncPlugin.Plugins.Etcd;
 
@@ -55,7 +55,7 @@ public class EtcdSyncPlugin : ISyncPlugin
             var key = BuildKey(context);
             var value = context.Value;
 
-            await _client.SetValAsync(key, value);
+            await _client.PutAsync(key, value);
             _logger.LogInformation("Synced config {Key} to etcd", key);
 
             return new SyncPluginResult { Success = true, Message = $"Synced to {key}" };
@@ -71,15 +71,12 @@ public class EtcdSyncPlugin : ISyncPlugin
     {
         try
         {
-            using var transaction = _client.CreateTransaction();
-
             foreach (var context in contexts)
             {
                 var key = BuildKey(context);
-                transaction.SetVal(key, context.Value);
+                await _client.PutAsync(key, context.Value);
             }
-
-            await transaction.CommitAsync();
+            
             _logger.LogInformation("Batch synced {Count} configs to etcd", contexts.Count());
 
             return new SyncPluginResult { Success = true, Message = "Batch sync completed" };
@@ -96,7 +93,7 @@ public class EtcdSyncPlugin : ISyncPlugin
         try
         {
             var key = BuildKey(context);
-            await _client.DeleteKeyAsync(key);
+            await _client.DeleteAsync(key);
             _logger.LogInformation("Deleted config {Key} from etcd", key);
 
             return new SyncPluginResult { Success = true, Message = $"Deleted {key}" };

@@ -6,7 +6,7 @@ namespace AgileConfig.Server.SyncPlugin;
 
 /// <summary>
 /// Service that handles config sync operations
-/// This service can be called when config changes in the system
+/// Now simplified - sync is handled by event handlers, this service is for manual sync if needed
 /// </summary>
 public class ConfigSyncService
 {
@@ -20,51 +20,17 @@ public class ConfigSyncService
     }
 
     /// <summary>
-    /// Sync a config when it's added or updated
+    /// Full sync all configs for an app+env
+    /// Uses "replace all" strategy
     /// </summary>
-    public async Task<bool> SyncConfigAsync(Config config, string env, SyncOperationType operationType)
+    public async Task<bool> SyncAllAsync(Config[] configs, string env)
     {
-        var context = new SyncContext
+        if (configs == null || !configs.Any())
         {
-            AppId = config.AppId,
-            AppName = config.AppId,
-            Env = env,
-            Key = config.Key,
-            Value = config.Value ?? "",
-            Group = config.Group,
-            OperationType = operationType,
-            Timestamp = DateTimeOffset.UtcNow
-        };
-
-        try
-        {
-            var result = operationType == SyncOperationType.Delete 
-                ? await _syncEngine.DeleteAsync(context)
-                : await _syncEngine.SyncAsync(context);
-
-            if (result.Success)
-            {
-                _logger.LogInformation("Config {Key} synced successfully", config.Key);
-            }
-            else
-            {
-                _logger.LogWarning("Config {Key} sync failed: {Message}", config.Key, result.Message);
-            }
-
-            return result.Success;
+            _logger.LogInformation("No configs to sync");
+            return true;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception syncing config {Key}", config.Key);
-            return false;
-        }
-    }
 
-    /// <summary>
-    /// Batch sync multiple configs
-    /// </summary>
-    public async Task<bool> BatchSyncConfigsAsync(IEnumerable<Config> configs, string env)
-    {
         var contexts = configs.Select(c => new SyncContext
         {
             AppId = c.AppId,
@@ -75,16 +41,16 @@ public class ConfigSyncService
             Group = c.Group,
             OperationType = SyncOperationType.Add,
             Timestamp = DateTimeOffset.UtcNow
-        }).ToList();
+        }).ToArray();
 
         try
         {
-            var result = await _syncEngine.SyncBatchAsync(contexts);
+            var result = await _syncEngine.SyncAllAsync(contexts);
             return result.Success;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception batch syncing configs");
+            _logger.LogError(ex, "Exception during full sync");
             return false;
         }
     }

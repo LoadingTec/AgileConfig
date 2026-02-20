@@ -1,29 +1,34 @@
-using Microsoft.Extensions.Logging;
 using AgileConfig.Server.Common.EventBus;
 using AgileConfig.Server.Data.Entity;
 using AgileConfig.Server.Event;
 using AgileConfig.Server.IService;
 using AgileConfig.Server.SyncPlugin;
 using AgileConfig.Server.SyncPlugin.Models;
+using AgileConfig.Server.SyncPlugin.Retry;
+using Microsoft.Extensions.Logging;
 
 namespace AgileConfig.Server.EventHandler;
 
 /// <summary>
 /// Event handler that syncs published configs to external systems via SyncPlugin
+/// Uses "replace all" strategy - always fetches latest configs and replaces all
 /// </summary>
 public class ConfigSyncEventHandler : IEventHandler<PublishConfigSuccessful>
 {
     private readonly IConfigService _configService;
     private readonly SyncEngine _syncEngine;
+    private readonly SyncRetryService _retryService;
     private readonly Microsoft.Extensions.Logging.ILogger<ConfigSyncEventHandler> _logger;
 
     public ConfigSyncEventHandler(
         IConfigService configService,
         SyncEngine syncEngine,
+        SyncRetryService retryService,
         Microsoft.Extensions.Logging.ILogger<ConfigSyncEventHandler> logger)
     {
         _configService = configService;
         _syncEngine = syncEngine;
+        _retryService = retryService;
         _logger = logger;
     }
 
@@ -53,89 +58,39 @@ public class ConfigSyncEventHandler : IEventHandler<PublishConfigSuccessful>
             var contexts = configs.Select(c => new SyncContext
             {
                 AppId = c.AppId,
-                AppName = timeline.AppId, // Use AppId as AppName since ConfigPublished doesn't have AppName
+                AppName = timeline.AppId,
                 Env = c.Env,
                 Key = c.Key,
                 Value = c.Value ?? "",
                 Group = c.Group,
                 OperationType = SyncOperationType.Add,
                 Timestamp = DateTimeOffset.UtcNow
-            }).ToList();
+            }).ToArray();
 
-            // Batch sync to all enabled plugins
-            var result = await _syncEngine.SyncBatchAsync(contexts);
+            // Full sync using "replace all" strategy
+            var result = await _syncEngine.SyncAllAsync(contexts);
             
             if (result.Success)
             {
                 _logger.LogInformation("Successfully synced {Count} configs for app {AppId} env {Env}", 
-                    contexts.Count, timeline.AppId, timeline.Env);
+                    contexts.Length, timeline.AppId, timeline.Env);
             }
             else
             {
                 _logger.LogWarning("Failed to sync configs for app {AppId} env {Env}: {Message}", 
                     timeline.AppId, timeline.Env, result.Message);
+                
+                // Record for retry
+                _retryService.RecordFailed(timeline.AppId, timeline.Env, result.Message);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during config sync for app {AppId} env {Env}", 
                 timeline.AppId, timeline.Env);
-        }
-    }
-}
-
-/// <summary>
-/// Event handler that syncs deleted configs to external systems
-/// </summary>
-public class ConfigDeleteSyncEventHandler : IEventHandler<DeleteConfigSuccessful>
-{
-    private readonly IConfigService _configService;
-    private readonly SyncEngine _syncEngine;
-    private readonly Microsoft.Extensions.Logging.ILogger<ConfigDeleteSyncEventHandler> _logger;
-
-    public ConfigDeleteSyncEventHandler(
-        IConfigService configService,
-        SyncEngine syncEngine,
-        Microsoft.Extensions.Logging.ILogger<ConfigDeleteSyncEventHandler> logger)
-    {
-        _configService = configService;
-        _syncEngine = syncEngine;
-        _logger = logger;
-    }
-
-    public async Task Handle(IEvent evt)
-    {
-        var evtInstance = evt as DeleteConfigSuccessful;
-        
-        try
-        {
-            var context = new SyncContext
-            {
-                AppId = evtInstance.Config.AppId,
-                AppName = evtInstance.Config.AppId, // Use AppId as AppName
-                Env = evtInstance.Config.Env,
-                Key = evtInstance.Config.Key,
-                Value = "",
-                Group = evtInstance.Config.Group,
-                OperationType = SyncOperationType.Delete,
-                Timestamp = DateTimeOffset.UtcNow
-            };
-
-            var result = await _syncEngine.DeleteAsync(context);
             
-            if (result.Success)
-            {
-                _logger.LogInformation("Successfully deleted config {Key} from sync plugins", context.Key);
-            }
-            else
-            {
-                _logger.LogWarning("Failed to delete config {Key} from sync plugins: {Message}", 
-                    context.Key, result.Message);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception during config delete sync");
+            // Record for retry
+            _retryService.RecordFailed(timeline.AppId, timeline.Env, ex.Message);
         }
     }
 }

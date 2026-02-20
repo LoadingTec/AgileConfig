@@ -4,6 +4,7 @@ namespace AgileConfig.Server.SyncPlugin;
 
 /// <summary>
 /// Interface for sync plugins
+/// All sync operations use "replace all" strategy: delete all + insert all
 /// </summary>
 public interface ISyncPlugin
 {
@@ -28,19 +29,11 @@ public interface ISyncPlugin
     Task<SyncPluginResult> InitializeAsync(SyncPluginConfig config);
 
     /// <summary>
-    /// Sync a single config change
+    /// Full sync: delete all + insert all for the given app+env
+    /// This is the ONLY sync method - no need to handle add/update/delete separately
     /// </summary>
-    Task<SyncPluginResult> SyncAsync(SyncContext context);
-
-    /// <summary>
-    /// Sync multiple config changes in batch
-    /// </summary>
-    Task<SyncPluginResult> SyncBatchAsync(IEnumerable<SyncContext> contexts);
-
-    /// <summary>
-    /// Delete a config from the external system
-    /// </summary>
-    Task<SyncPluginResult> DeleteAsync(SyncContext context);
+    /// <param name="contexts">All current published configs for the app+env</param>
+    Task<SyncPluginResult> SyncAllAsync(SyncContext[] contexts);
 
     /// <summary>
     /// Health check for the plugin

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AgileConfig.Server.Data.Entity\AgileConfig.Server.Data.Entity.csproj" />
+    <ProjectReference Include="..\AgileConfig.Server.IService\AgileConfig.Server.IService.csproj" />
   </ItemGroup>
 
 </Project>

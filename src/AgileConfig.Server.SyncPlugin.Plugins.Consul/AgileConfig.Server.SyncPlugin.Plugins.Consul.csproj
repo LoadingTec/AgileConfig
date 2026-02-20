@@ -6,9 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Consul" Version="1.6.10.9" />
-  </ItemGroup>
+  <!-- Consul package will be added when actual implementation is done -->
+  <!-- <ItemGroup> -->
+  <!--   <PackageReference Include="Consul" Version="1.6.10.9" /> -->
+  <!-- </ItemGroup> -->
 
   <ItemGroup>
     <ProjectReference Include="..\AgileConfig.Server.SyncPlugin\AgileConfig.Server.SyncPlugin.csproj" />

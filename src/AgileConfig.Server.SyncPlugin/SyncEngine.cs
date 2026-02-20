@@ -5,6 +5,7 @@ namespace AgileConfig.Server.SyncPlugin;
 
 /// <summary>
 /// Sync engine that manages all plugins and handles config synchronization
+/// Uses "replace all" strategy: delete all + insert all for each sync
 /// </summary>
 public class SyncEngine : IDisposable
 {
@@ -77,81 +78,42 @@ public class SyncEngine : IDisposable
     }
 
     /// <summary>
-    /// Sync a config change to all enabled plugins
+    /// Full sync to all enabled plugins using "replace all" strategy
     /// </summary>
-    public async Task<SyncPluginResult> SyncAsync(SyncContext context)
+    public async Task<SyncPluginResult> SyncAllAsync(SyncContext[] contexts)
     {
-        var tasks = _plugins.Values
+        var enabledPlugins = _plugins.Values
             .Where(p => IsPluginEnabled(p.Name))
-            .Select(p => SafeExecuteAsync(() => p.SyncAsync(context)));
+            .ToList();
+
+        if (!enabledPlugins.Any())
+        {
+            _logger.LogDebug("No enabled plugins, skipping sync");
+            return new SyncPluginResult { Success = true, Message = "No enabled plugins" };
+        }
+
+        var tasks = enabledPlugins
+            .Select(p => SafeExecuteAsync(() => p.SyncAllAsync(contexts)));
 
         var results = await Task.WhenAll(tasks);
         
         var failed = results.Where(r => !r.Success).ToList();
         if (failed.Any())
         {
+            var failedPlugins = string.Join(", ", failed.Select(f => f.Message));
+            _logger.LogWarning("Sync failed for {Count} plugins: {FailedPlugins}", failed.Count, failedPlugins);
+            
             return new SyncPluginResult
             {
                 Success = false,
-                Message = $"Sync failed for {failed.Count} plugins: {string.Join(", ", failed.Select(f => f.Message))}"
+                Message = $"Sync failed for {failed.Count} plugins: {failedPlugins}"
             };
         }
 
-        return new SyncPluginResult { Success = true, Message = "Synced to all enabled plugins" };
-    }
-
-    /// <summary>
-    /// Sync multiple config changes in batch
-    /// </summary>
-    public async Task<SyncPluginResult> SyncBatchAsync(IEnumerable<SyncContext> contexts)
-    {
-        var contextList = contexts.ToList();
-        if (!contextList.Any())
-        {
-            return new SyncPluginResult { Success = true, Message = "No contexts to sync" };
-        }
-
-        var tasks = _plugins.Values
-            .Where(p => IsPluginEnabled(p.Name))
-            .Select(p => SafeExecuteAsync(() => p.SyncBatchAsync(contextList)));
-
-        var results = await Task.WhenAll(tasks);
-
-        var failed = results.Where(r => !r.Success).ToList();
-        if (failed.Any())
-        {
-            return new SyncPluginResult
-            {
-                Success = false,
-                Message = $"Batch sync failed for {failed.Count} plugins: {string.Join(", ", failed.Select(f => f.Message))}"
-            };
-        }
-
-        return new SyncPluginResult { Success = true, Message = "Batch synced to all enabled plugins" };
-    }
-
-    /// <summary>
-    /// Delete a config from all enabled plugins
-    /// </summary>
-    public async Task<SyncPluginResult> DeleteAsync(SyncContext context)
-    {
-        var tasks = _plugins.Values
-            .Where(p => IsPluginEnabled(p.Name))
-            .Select(p => SafeExecuteAsync(() => p.DeleteAsync(context)));
-
-        var results = await Task.WhenAll(tasks);
-
-        var failed = results.Where(r => !r.Success).ToList();
-        if (failed.Any())
-        {
-            return new SyncPluginResult
-            {
-                Success = false,
-                Message = $"Delete failed for {failed.Count} plugins: {string.Join(", ", failed.Select(f => f.Message))}"
-            };
-        }
-
-        return new SyncPluginResult { Success = true, Message = "Deleted from all enabled plugins" };
+        _logger.LogInformation("Successfully synced {Count} configs to {PluginCount} plugins", 
+            contexts.Length, enabledPlugins.Count);
+        
+        return new SyncPluginResult { Success = true, Message = $"Synced to {enabledPlugins.Count} plugins" };
     }
 
     /// <summary>
@@ -191,6 +153,14 @@ public class SyncEngine : IDisposable
     /// Get plugin by name
     /// </summary>
     public ISyncPlugin? GetPlugin(string name) => _plugins.GetValueOrDefault(name);
+
+    /// <summary>
+    /// Get list of enabled plugin names
+    /// </summary>
+    public List<string> GetEnabledPluginNames()
+    {
+        return _plugins.Keys.Where(IsPluginEnabled).ToList();
+    }
 
     private bool IsPluginEnabled(string pluginName)
     {

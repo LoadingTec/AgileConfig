@@ -33,6 +33,6 @@ public class SystemEventHandlersRegister(ITinyEventBus tinyEventBus) : IEventHan
         
         // SyncPlugin event handlers
         tinyEventBus.Register<ConfigSyncEventHandler>();
-        tinyEventBus.Register<ConfigDeleteSyncEventHandler>();
+        // Note: ConfigDeleteSyncEventHandler removed - using "replace all" strategy, no need to handle deletes
     }
 }

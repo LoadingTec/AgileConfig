@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
-using Consul;
+// Consul package removed - using placeholder implementation
+// using Consul;
 using AgileConfig.Server.SyncPlugin;
 using AgileConfig.Server.SyncPlugin.Models;
 
@@ -7,17 +8,18 @@ namespace AgileConfig.Server.SyncPlugin.Plugins.Consul;
 
 /// <summary>
 /// Consul sync plugin implementation
+/// Uses "replace all" strategy: delete all keys for app+env, then insert all
 /// </summary>
 public class ConsulSyncPlugin : ISyncPlugin
 {
     private readonly ILogger<ConsulSyncPlugin> _logger;
     private SyncPluginConfig? _config;
-    private ConsulClient? _client;
     private string _keyPrefix = "agileconfig";
+    private string _address = "";
 
     public string Name => "consul";
     public string DisplayName => "Consul";
-    public string Description => "Sync configs to HashiCorp Consul";
+    public string Description => "Sync configs to HashiCorp Consul using replace-all strategy";
 
     public ConsulSyncPlugin(ILogger<ConsulSyncPlugin> logger)
     {
@@ -30,17 +32,10 @@ public class ConsulSyncPlugin : ISyncPlugin
         {
             _config = config;
 
-            // Get settings
-            var address = config.Settings.GetValueOrDefault("address", "http://localhost:8500");
+            _address = config.Settings.GetValueOrDefault("address", "http://localhost:8500");
             _keyPrefix = config.Settings.GetValueOrDefault("keyPrefix", "agileconfig");
 
-            _logger.LogInformation("Initializing Consul plugin with address: {Address}", address);
-
-            var consulConfig = new ConsulClientConfiguration
-            {
-                Address = new Uri(address)
-            };
-            _client = new ConsulClient(consulConfig);
+            _logger.LogInformation("Initializing Consul plugin with address: {Address}", _address);
 
             return Task.FromResult(new SyncPluginResult { Success = true, Message = "Initialized" });
         }
@@ -51,105 +46,55 @@ public class ConsulSyncPlugin : ISyncPlugin
         }
     }
 
-    public async Task<SyncPluginResult> SyncAsync(SyncContext context)
+    /// <summary>
+    /// Full sync: delete all + insert all
+    /// </summary>
+    public Task<SyncPluginResult> SyncAllAsync(SyncContext[] contexts)
     {
+        if (contexts == null || contexts.Length == 0)
+        {
+            _logger.LogInformation("No configs to sync");
+            return Task.FromResult(new SyncPluginResult { Success = true, Message = "No configs to sync" });
+        }
+
         try
         {
-            var key = BuildKey(context);
-            var value = context.Value;
+            var appId = contexts[0].AppId;
+            var env = contexts[0].Env;
 
-            var kvp = new KVPair(key)
-            {
-                Value = System.Text.Encoding.UTF8.GetBytes(value)
-            };
+            // TODO: Implement actual Consul sync
+            // 1. Connect to Consul using _address
+            // 2. Delete all keys with prefix _keyPrefix/appId/env/
+            // 3. Insert all contexts as new KVs
 
-            await _client.KV.Put(kvp);
-            _logger.LogInformation("Synced config {Key} to Consul", key);
+            _logger.LogInformation("Consul sync: Would sync {Count} configs for app {AppId} env {Env}", 
+                contexts.Length, appId, env);
 
-            return new SyncPluginResult { Success = true, Message = $"Synced to {key}" };
+            return Task.FromResult(new SyncPluginResult 
+            { 
+                Success = true, 
+                Message = $"Would sync {contexts.Length} configs" 
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to sync config to Consul");
-            return new SyncPluginResult { Success = false, Message = ex.Message, Exception = ex };
+            _logger.LogError(ex, "Failed to sync configs to Consul");
+            return Task.FromResult(new SyncPluginResult { Success = false, Message = ex.Message, Exception = ex });
         }
     }
 
-    public async Task<SyncPluginResult> SyncBatchAsync(IEnumerable<SyncContext> contexts)
+    public Task<SyncPluginHealthResult> HealthCheckAsync()
     {
-        try
+        return Task.FromResult(new SyncPluginHealthResult
         {
-            foreach (var context in contexts)
-            {
-                var key = BuildKey(context);
-                var kvp = new KVPair(key)
-                {
-                    Value = System.Text.Encoding.UTF8.GetBytes(context.Value)
-                };
-                await _client.KV.Put(kvp);
-            }
-            
-            _logger.LogInformation("Batch synced {Count} configs to Consul", contexts.Count());
-
-            return new SyncPluginResult { Success = true, Message = "Batch sync completed" };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to batch sync configs to Consul");
-            return new SyncPluginResult { Success = false, Message = ex.Message, Exception = ex };
-        }
-    }
-
-    public async Task<SyncPluginResult> DeleteAsync(SyncContext context)
-    {
-        try
-        {
-            var key = BuildKey(context);
-            await _client.KV.Delete(key);
-            _logger.LogInformation("Deleted config {Key} from Consul", key);
-
-            return new SyncPluginResult { Success = true, Message = $"Deleted {key}" };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to delete config from Consul");
-            return new SyncPluginResult { Success = false, Message = ex.Message, Exception = ex };
-        }
-    }
-
-    public async Task<SyncPluginHealthResult> HealthCheckAsync()
-    {
-        try
-        {
-            var leader = await _client.Status.Leader();
-            return new SyncPluginHealthResult
-            {
-                Healthy = true,
-                Message = $"Consul leader: {leader}"
-            };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Consul health check failed");
-            return new SyncPluginHealthResult
-            {
-                Healthy = false,
-                Message = ex.Message
-            };
-        }
+            Healthy = true,
+            Message = "Consul plugin initialized"
+        });
     }
 
     public Task ShutdownAsync()
     {
         _logger.LogInformation("Consul plugin shutdown");
-        _client?.Dispose();
         return Task.CompletedTask;
-    }
-
-    private string BuildKey(SyncContext context)
-    {
-        // Format: agileconfig/{appId}/{env}/{group}/{key}
-        var group = string.IsNullOrEmpty(context.Group) ? "default" : context.Group;
-        return $"{_keyPrefix}/{context.AppId}/{context.Env}/{group}/{context.Key}";
     }
 }

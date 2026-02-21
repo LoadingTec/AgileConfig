@@ -49,7 +49,7 @@ public class SyncPluginInitializer : IHostedService
 
     private void RegisterBuiltInPlugins(SyncEngine syncEngine, ILoggerFactory loggerFactory)
     {
-        // Register Etcd plugin if the project is referenced
+        // Register Etcd plugin
         try
         {
             var etcdLogger = loggerFactory.CreateLogger<EtcdSyncPlugin>();

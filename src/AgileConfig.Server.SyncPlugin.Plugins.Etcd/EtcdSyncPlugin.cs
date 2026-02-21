@@ -1,24 +1,25 @@
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using AgileConfig.Server.SyncPlugin;
 using AgileConfig.Server.SyncPlugin.Models;
-using dotnet_etcd;
 
 namespace AgileConfig.Server.SyncPlugin.Plugins.Etcd;
 
 /// <summary>
-/// Etcd sync plugin implementation
+/// Etcd sync plugin implementation using HTTP API
 /// Uses "replace all" strategy: delete all keys for app+env, then insert all
 /// </summary>
 public class EtcdSyncPlugin : ISyncPlugin
 {
     private readonly ILogger<EtcdSyncPlugin> _logger;
     private SyncPluginConfig? _config;
-    private EtcdClient? _client;
+    private HttpClient? _httpClient;
     private string _keyPrefix = "/agileconfig";
 
     public string Name => "etcd";
     public string DisplayName => "Etcd";
-    public string Description => "Sync configs to etcd using replace-all strategy";
+    public string Description => "Sync configs to etcd using replace-all strategy (HTTP API)";
 
     public EtcdSyncPlugin(ILogger<EtcdSyncPlugin> logger)
     {
@@ -36,7 +37,10 @@ public class EtcdSyncPlugin : ISyncPlugin
 
             _logger.LogInformation("Initializing Etcd plugin with endpoints: {Endpoints}", endpoints);
 
-            _client = new EtcdClient(endpoints);
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(endpoints.TrimEnd('/'))
+            };
 
             return Task.FromResult(new SyncPluginResult { Success = true, Message = "Initialized" });
         }
@@ -50,12 +54,12 @@ public class EtcdSyncPlugin : ISyncPlugin
     /// <summary>
     /// Full sync: delete all + insert all
     /// </summary>
-    public Task<SyncPluginResult> SyncAllAsync(SyncContext[] contexts)
+    public async Task<SyncPluginResult> SyncAllAsync(SyncContext[] contexts)
     {
         if (contexts == null || contexts.Length == 0)
         {
             _logger.LogInformation("No configs to sync");
-            return Task.FromResult(new SyncPluginResult { Success = true, Message = "No configs to sync" });
+            return new SyncPluginResult { Success = true, Message = "No configs to sync" };
         }
 
         try
@@ -64,44 +68,126 @@ public class EtcdSyncPlugin : ISyncPlugin
             var env = contexts[0].Env;
             var prefix = $"{_keyPrefix}/{appId}/{env}/";
 
-            // Delete all existing keys with prefix
-            _client.Delete(prefix);
+            // Step 1: Delete all existing keys with prefix
+            await DeleteRangeAsync(prefix);
+            _logger.LogInformation("Deleted all keys with prefix {Prefix}", prefix);
 
-            // Insert all new configs
+            // Step 2: Insert all new configs
             foreach (var context in contexts)
             {
                 var key = BuildKey(context);
-                _client.Put(key, context.Value);
+                await PutAsync(key, context.Value);
             }
 
             _logger.LogInformation("Synced {Count} configs to etcd for app {AppId} env {Env}", 
                 contexts.Length, appId, env);
 
-            return Task.FromResult(new SyncPluginResult 
+            return new SyncPluginResult 
             { 
                 Success = true, 
                 Message = $"Synced {contexts.Length} configs" 
-            });
+            };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to sync configs to etcd");
-            return Task.FromResult(new SyncPluginResult { Success = false, Message = ex.Message, Exception = ex });
+            return new SyncPluginResult { Success = false, Message = ex.Message, Exception = ex };
         }
     }
 
-    public Task<SyncPluginHealthResult> HealthCheckAsync()
+    /// <summary>
+    /// Put a key-value pair
+    /// </summary>
+    private async Task PutAsync(string key, string value)
     {
-        return Task.FromResult(new SyncPluginHealthResult
+        var request = new
         {
-            Healthy = true,
-            Message = "Etcd plugin initialized"
-        });
+            key = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(key)),
+            value = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(value))
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("/v3/kv/put", request);
+        response.EnsureSuccessStatusCode();
+    }
+
+    /// <summary>
+    /// Delete all keys with given prefix
+    /// </summary>
+    private async Task DeleteRangeAsync(string prefix)
+    {
+        // Range request to get all keys with prefix
+        var rangeRequest = new
+        {
+            key = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(prefix)),
+            range_end = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(GetRangeEnd(prefix)))
+        };
+
+        var rangeResponse = await _httpClient.PostAsJsonAsync("/v3/kv/range", rangeRequest);
+        rangeResponse.EnsureSuccessStatusCode();
+        
+        var rangeResult = await rangeResponse.Content.ReadFromJsonAsync<EtcdRangeResponse>();
+        
+        if (rangeResult?.kvs != null && rangeResult.kvs.Count > 0)
+        {
+            // Delete each key
+            foreach (var kvp in rangeResult.kvs)
+            {
+                var deleteRequest = new
+                {
+                    key = kvp.key
+                };
+                
+                var deleteResponse = await _httpClient.PostAsJsonAsync("/v3/kv/delete-range", deleteRequest);
+                deleteResponse.EnsureSuccessStatusCode();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Get the range end for prefix deletion
+    /// </summary>
+    private string GetRangeEnd(string prefix)
+    {
+        // Increment the last character to create a range end
+        var bytes = System.Text.Encoding.UTF8.GetBytes(prefix);
+        bytes[bytes.Length - 1]++;
+        return System.Text.Encoding.UTF8.GetString(bytes);
+    }
+
+    public async Task<SyncPluginHealthResult> HealthCheckAsync()
+    {
+        try
+        {
+            // Try a simple range request to check connectivity
+            var request = new
+            {
+                key = "YWJj", // "abc" in base64
+                limit = 1
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("/v3/kv/range", request);
+            
+            return new SyncPluginHealthResult
+            {
+                Healthy = response.IsSuccessStatusCode,
+                Message = response.IsSuccessStatusCode ? "Etcd connection OK" : "Etcd connection failed"
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Etcd health check failed");
+            return new SyncPluginHealthResult
+            {
+                Healthy = false,
+                Message = ex.Message
+            };
+        }
     }
 
     public Task ShutdownAsync()
     {
         _logger.LogInformation("Etcd plugin shutdown");
+        _httpClient?.Dispose();
         return Task.CompletedTask;
     }
 
@@ -110,4 +196,19 @@ public class EtcdSyncPlugin : ISyncPlugin
         var group = string.IsNullOrEmpty(context.Group) ? "default" : context.Group;
         return $"{_keyPrefix}/{context.AppId}/{context.Env}/{group}/{context.Key}";
     }
+}
+
+/// <summary>
+/// Response model for etcd range query
+/// </summary>
+internal class EtcdRangeResponse
+{
+    public int count { get; set; }
+    public List<EtcdKv>? kvs { get; set; }
+}
+
+internal class EtcdKv
+{
+    public string key { get; set; } = "";
+    public string value { get; set; } = "";
 }

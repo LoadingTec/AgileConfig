@@ -6,10 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="dotnet-etcd" Version="8.1.0" />
-  </ItemGroup>
-
+  <!-- Using HTTP API - no external package needed -->
+  
   <ItemGroup>
     <ProjectReference Include="..\AgileConfig.Server.SyncPlugin\AgileConfig.Server.SyncPlugin.csproj" />
   </ItemGroup>

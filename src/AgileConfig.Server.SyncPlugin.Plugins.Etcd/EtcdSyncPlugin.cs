@@ -1,8 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using AgileConfig.Server.SyncPlugin;
-using AgileConfig.Server.SyncPlugin.Models;
+using AgileConfig.Server.SyncPlugin.Contracts;
 
 namespace AgileConfig.Server.SyncPlugin.Plugins.Etcd;
 

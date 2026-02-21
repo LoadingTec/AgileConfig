@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Logging;
 // Consul package removed - using placeholder implementation
 // using Consul;
-using AgileConfig.Server.SyncPlugin;
-using AgileConfig.Server.SyncPlugin.Models;
+using AgileConfig.Server.SyncPlugin.Contracts;
 
 namespace AgileConfig.Server.SyncPlugin.Plugins.Consul;
 

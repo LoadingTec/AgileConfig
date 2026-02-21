@@ -37,7 +37,6 @@ public static class ServiceCollectionExt
 
         // SyncPlugin services
         sc.AddSyncPlugin();
-        sc.AddSingleton<AgileConfig.Server.SyncPlugin.Retry.SyncRetryService>();
-        sc.AddHostedService<AgileConfig.Server.SyncPlugin.BackgroundServices.SyncRetryBackgroundService>();
+        sc.AddHostedService<AgileConfig.Server.SyncPlugin.BackgroundServices.SyncPluginInitializer>();
     }
 }

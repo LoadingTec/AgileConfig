@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using AgileConfig.Server.Data.Entity;
-using AgileConfig.Server.SyncPlugin.Models;
+using AgileConfig.Server.SyncPlugin.Contracts;
 
 namespace AgileConfig.Server.SyncPlugin;
 

@@ -9,7 +9,11 @@
   <!-- Using HTTP API - no external package needed -->
   
   <ItemGroup>
-    <ProjectReference Include="..\AgileConfig.Server.SyncPlugin\AgileConfig.Server.SyncPlugin.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AgileConfig.Server.SyncPlugin.Contracts\AgileConfig.Server.SyncPlugin.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

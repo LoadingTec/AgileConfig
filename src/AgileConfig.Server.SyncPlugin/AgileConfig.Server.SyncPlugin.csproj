@@ -12,8 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AgileConfig.Server.SyncPlugin.Contracts\AgileConfig.Server.SyncPlugin.Contracts.csproj" />
     <ProjectReference Include="..\AgileConfig.Server.Data.Entity\AgileConfig.Server.Data.Entity.csproj" />
     <ProjectReference Include="..\AgileConfig.Server.IService\AgileConfig.Server.IService.csproj" />
+    <ProjectReference Include="..\AgileConfig.Server.SyncPlugin.Plugins.Etcd\AgileConfig.Server.SyncPlugin.Plugins.Etcd.csproj" />
   </ItemGroup>
 
 </Project>

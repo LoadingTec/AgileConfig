@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using AgileConfig.Server.Data.Entity;
 using AgileConfig.Server.IService;
@@ -12,7 +13,7 @@ namespace AgileConfig.Server.SyncPlugin.Retry;
 public class SyncRetryService
 {
     private readonly SyncEngine _syncEngine;
-    private readonly IConfigService _configService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<SyncRetryService> _logger;
     private readonly List<FailedSyncRecord> _failedRecords = new();
     private readonly object _lock = new();
@@ -23,11 +24,11 @@ public class SyncRetryService
 
     public SyncRetryService(
         SyncEngine syncEngine,
-        IConfigService configService,
+        IServiceProvider serviceProvider,
         ILogger<SyncRetryService> logger)
     {
         _syncEngine = syncEngine;
-        _configService = configService;
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
@@ -100,13 +101,17 @@ public class SyncRetryService
     /// </summary>
     private async Task RetrySyncAsync(FailedSyncRecord record)
     {
+        // Create a scope to resolve scoped services
+        using var scope = _serviceProvider.CreateScope();
+        var configService = scope.ServiceProvider.GetRequiredService<IConfigService>();
+        
         try
         {
             _logger.LogInformation("Retrying sync for app {AppId} env {Env}, attempt {Attempt}", 
                 record.AppId, record.Env, record.RetryCount);
 
             // Get latest configs from database
-            var configs = await _configService.GetPublishedConfigsAsync(record.AppId, record.Env);
+            var configs = await configService.GetPublishedConfigsAsync(record.AppId, record.Env);
             
             if (configs == null || !configs.Any())
             {

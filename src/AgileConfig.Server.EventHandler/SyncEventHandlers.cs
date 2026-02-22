@@ -3,7 +3,7 @@ using AgileConfig.Server.Data.Entity;
 using AgileConfig.Server.Event;
 using AgileConfig.Server.IService;
 using AgileConfig.Server.SyncPlugin;
-using AgileConfig.Server.SyncPlugin.Models;
+using AgileConfig.Server.SyncPlugin.Contracts;
 using AgileConfig.Server.SyncPlugin.Retry;
 using Microsoft.Extensions.Logging;
 

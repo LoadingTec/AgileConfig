@@ -57,7 +57,7 @@ public class SyncPluginInitializer : IHostedService
             syncEngine.RegisterPlugin(etcdPlugin, new SyncPluginConfig
             {
                 PluginName = "etcd",
-                Enabled = "false",
+                Enabled = "true",
                 Settings = new Dictionary<string, string>
                 {
                     { "endpoints", "http://localhost:2379" },

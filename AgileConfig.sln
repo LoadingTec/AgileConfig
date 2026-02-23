@@ -60,7 +60,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgileConfig.Server.SyncPlug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgileConfig.Server.SyncPlugin.Plugins.Etcd", "src\AgileConfig.Server.SyncPlugin.Plugins.Etcd\AgileConfig.Server.SyncPlugin.Plugins.Etcd.csproj", "{B2C3D4E5-F6A7-8901-BCDE-F12345678901}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgileConfig.Server.SyncPlugin.Plugins.Consul", "src\AgileConfig.Server.SyncPlugin.Plugins.Consul\AgileConfig.Server.SyncPlugin.Plugins.Consul.csproj", "{C3D4E5F6-A7B8-9012-CDEF-123456789012}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

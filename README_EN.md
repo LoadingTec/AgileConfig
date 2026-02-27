@@ -176,15 +176,3 @@ Or you can use a signleton instance without any injection.
 var userid = ConfigClient.Instance["userid"]
 ```
 
-## donate
-If this project is helpful to you, please scan the QR code below for a cup of coffee.    
- <img src="https://static.xbaby.xyz/alipay_qr.jpg|w30" width="300">
-     
- <img src="https://static.xbaby.xyz/wechatpay_qr.jpg|w30" width="300">
-   
-## thanks 💖💖💖    
-大鹏￥66.66 , 瘦草￥6.66 + 88 , ziana￥10.0 , Nullable￥9.99 , *三 ￥6.66 , HHM ￥6.66 , *。 ￥6.66 , 微笑刺客 ￥6.66 ,飞鸟与鱼 ￥38.88,  *航 ￥9.9, *啦 ￥6.66, *海 ￥6.66, Dyx 邓杨喜 ￥30 And more ...
-## contact me
-mail：minj.zhou@gmail.com   
-🐧 group：1022985150
-

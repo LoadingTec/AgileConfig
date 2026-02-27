@@ -303,18 +303,3 @@ public class HomeController : Controller
 ``` C#
 var userid = ConfigClient.Instance["userid"]
 ```
-
-## 联系我
-有什么问题可以mail我：minj.zhou@gmail.com   
-也可以加qq群：1022985150
-## 如果觉得这个项目对你有帮助可以给作者早餐加个蛋🍳🍳🍳
- <img src="https://static.xbaby.xyz/alipay_qr.jpg|w30" width="300">
-     
- <img src="https://static.xbaby.xyz/wechatpay_qr.jpg|w30" width="300">
-
-
-        
-### 感谢💖💖💖
-UnitySir ￥100 , 大鹏￥66.66 , 瘦草￥6.66 + 88 , ziana￥10.0 , Nullable￥9.99 , *三 ￥6.66 , HHM ￥6.66 , 微笑刺客 ￥6.66 , 飞鸟与鱼 ￥38.88, *航 ￥9.9, *啦 ￥6.66, *海 ￥6.66, Dyx 邓杨喜 ￥30 ...
-    
-还有很多同学的赞助，我就不一一列举了。当然你也可以自己修改这个文件 PR 给我。

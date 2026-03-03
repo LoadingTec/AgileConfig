@@ -47,20 +47,20 @@ const Login: React.FC<LoginProps> = (props) => {
       payload: { ...values, type },
     });
   };
-  const handleAutoScript = async () => {
-    const hide = message.loading('Executing script...');
-    try {
-      // TODO: Add your automatic script logic here
-      // Example: Call an API or execute some automation
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated delay
+  // const handleAutoScript = async () => {
+  //   const hide = message.loading('Executing script...');
+  //   try {
+  //     // TODO: Add your automatic script logic here
+  //     // Example: Call an API or execute some automation
+  //     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated delay
       
-      hide();
-      message.success('Script executed successfully!');
-    } catch (error) {
-      hide();
-      message.error('Script execution failed!');
-    }
-  };
+  //     hide();
+  //     message.success('Script executed successfully!');
+  //   } catch (error) {
+  //     hide();
+  //     message.error('Script execution failed!');
+  //   }
+  // };
   return (
     <div className={styles.main}>
       <ProForm
@@ -150,7 +150,7 @@ const Login: React.FC<LoginProps> = (props) => {
         >
         </div>
       </ProForm>
-      <Button hidden={!ssoEnabled} type="dashed" size='large' style={{ width:'100%', marginTop:'20px' }} href='/sso/login' > { ssoLoginButtonText }</Button>
+      {/* <Button hidden={!ssoEnabled} type="dashed" size='large' style={{ width:'100%', marginTop:'20px' }} href='/sso/login' > { ssoLoginButtonText }</Button>
       <Button
         type="link"
         size='large'
@@ -161,7 +161,7 @@ const Login: React.FC<LoginProps> = (props) => {
           id: 'pages.login.auto_script',
           defaultMessage: 'Execute Auto Script',
         })}
-      </Button>
+      </Button> */}
     </div>
   );
 };

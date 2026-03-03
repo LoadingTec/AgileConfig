@@ -55,6 +55,9 @@ const Summary: React.FC<summaryProps> = (props) => {
         <Col flex={1}>
           <ItemInfo count={serviceOnCount + '/' + serviceCount} type="service" link="/service" icon={<CloudOutlined ></CloudOutlined>}></ItemInfo>
         </Col>
+        <Col flex={1}>
+          <ItemInfo count={'0'}  type="logs" link="/logs" icon={<CloudOutlined ></CloudOutlined>}></ItemInfo>
+        </Col>
       </Row>
     </div>
   );

@@ -11,7 +11,7 @@ import type { StateType } from '@/models/login';
 import type { LoginParamsType } from '@/services/login';
 import type { ConnectState } from '@/models/connect';
 import styles from './index.less';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 
 export type LoginProps = {
   dispatch: Dispatch;
@@ -24,7 +24,7 @@ const Login: React.FC<LoginProps> = (props) => {
   const { submitting } = props;
   const [type] = useState<string>('account');
   const [ssoEnabled, setSsoEnabled] = useState<boolean>(false);
-  const [ssoLoginButtonText, setSsoLoginButtonText] = useState<string>('SSO Login');
+  const [ssoLoginButtonText, setSsoLoginButtonText] = useState<string>('SSO-Login');
   const intl = useIntl();
 
   useEffect(()=>{
@@ -46,6 +46,20 @@ const Login: React.FC<LoginProps> = (props) => {
       type: 'login/login',
       payload: { ...values, type },
     });
+  };
+  const handleAutoScript = async () => {
+    const hide = message.loading('Executing script...');
+    try {
+      // TODO: Add your automatic script logic here
+      // Example: Call an API or execute some automation
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated delay
+      
+      hide();
+      message.success('Script executed successfully!');
+    } catch (error) {
+      hide();
+      message.error('Script execution failed!');
+    }
   };
   return (
     <div className={styles.main}>
@@ -136,7 +150,18 @@ const Login: React.FC<LoginProps> = (props) => {
         >
         </div>
       </ProForm>
-      <Button hidden={!ssoEnabled} type="primary" size='large' style={{ width:'100%', marginTop:'20px' }} href='/sso/login' >{ ssoLoginButtonText }</Button>
+      <Button hidden={!ssoEnabled} type="dashed" size='large' style={{ width:'100%', marginTop:'20px' }} href='/sso/login' > { ssoLoginButtonText }</Button>
+      <Button
+        type="link"
+        size='large'
+        style={{ width: '100%', marginTop: '10px' }}
+        onClick={handleAutoScript}
+      >
+        {intl.formatMessage({
+          id: 'pages.login.auto_script',
+          defaultMessage: 'Execute Auto Script',
+        })}
+      </Button>
     </div>
   );
 };

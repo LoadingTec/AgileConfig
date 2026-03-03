@@ -11,6 +11,7 @@ import { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 import UpdateUser from './comps/updateUser';
 import { getAuthority } from '@/utils/authority';
 import { RequireFunction } from '@/utils/permission';
+import { Tooltip } from 'antd'; // Step 1: Import Tooltip
 
 const { confirm } = Modal;
 

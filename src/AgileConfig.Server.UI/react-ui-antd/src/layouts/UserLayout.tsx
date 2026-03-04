@@ -47,13 +47,13 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
           <div className={styles.top}>
             <div className={styles.header}>
               <Link to="/">
-                <span className={styles.title}>AgileConfig</span>
+                <span className={styles.title}>AKO Config Center</span>
               </Link>
             </div>
             <div className={styles.desc}>
               <FormattedMessage
                 id="pages.layouts.userLayout.title"
-                defaultMessage="AgileConfig"
+                defaultMessage="AKO Config Center"
               />
             </div>
           </div>

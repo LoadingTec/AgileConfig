@@ -13,3 +13,7 @@ mkdir -p "$TARGET_DIR"
 cp -rf dist/* "$TARGET_DIR/"
 
 echo "Build completed and files copied to $TARGET_DIR"
+
+echo "发布前输入服务器密码："
+scp -r /mnt/c/Users/Administrator/source/repos/AgileConfig/src/AgileConfig.Server.Apisite/bin/Debug/net10.0/wwwroot/ui ak@192.168.205.134:/home/ak/www/ConfigCenter/wwwroot/
+echo "复制并发布完成！"

@@ -11,7 +11,7 @@ const proSettings: DefaultSettings ={
   "contentWidth": "Fluid",
   "fixedHeader": false,
   "fixSiderbar": true,
-  "title": "AgileConfig",
+  "title": "AKO Config Center",
   "pwa": false,
   "iconfontUrl": "",
   "menu": {

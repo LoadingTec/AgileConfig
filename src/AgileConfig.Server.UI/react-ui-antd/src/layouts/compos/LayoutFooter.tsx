@@ -10,11 +10,11 @@ const LayoutFooter : React.FC =()=>{
           marginBottom: '10px',
           color: '#bfbfbf'
         }}>
+          &nbsp; Powered by AKO R&D 
+          <a title={'AKO Config Center:' + getAppVer()} href="#" style={{color:'#bfbfbf'}}>@</a>
           v
           { getAppVer()}
-          &nbsp;&nbsp;  
-          <a title={'AKO Config Center:' + getAppVer()} href="#" style={{color:'#bfbfbf'}}>@<GithubOutlined/> </a>
-          &nbsp; Powered by AKO R&D
+          &nbsp;
         </div>
       )
 }

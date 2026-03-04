@@ -38,7 +38,7 @@ export default {
   'resetpassword.update_fail': 'Reset password failed .',
 
   'pages.layouts.userLayout.title':
-    'AgileConfig - a light configuration server',
+    'AKO Config Center - a light configuration server',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password（admin/ant.design)',
   'pages.login.username.placeholder': 'Username',

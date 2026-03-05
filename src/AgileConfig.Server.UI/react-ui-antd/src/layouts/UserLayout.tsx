@@ -7,6 +7,8 @@ import React from 'react';
 import type { ConnectState } from '@/models/connect';
 import styles from './UserLayout.less';
 import LayoutFooter from './compos/LayoutFooter';
+import { Tooltip } from 'antd';
+import logo from '../assets/logo.svg';
 
 export type UserLayoutProps = {
   breadcrumbNameMap: Record<string, MenuDataItem>;
@@ -47,7 +49,9 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
           <div className={styles.top}>
             <div className={styles.header}>
               <Link to="/">
-                <span className={styles.title}>AKO Config Center</span>
+                <Tooltip title="AKO Config Center">
+                  <img src={logo} alt="Logo" className={styles.logologin} />
+                </Tooltip>
               </Link>
             </div>
             <div className={styles.desc}>

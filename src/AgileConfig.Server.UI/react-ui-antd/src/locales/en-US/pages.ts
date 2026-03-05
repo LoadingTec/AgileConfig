@@ -38,7 +38,7 @@ export default {
   'resetpassword.update_fail': 'Reset password failed .',
 
   'pages.layouts.userLayout.title':
-    'AKO Config Center - a light configuration server',
+    'Config Center for H3000',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password（admin/ant.design)',
   'pages.login.username.placeholder': 'Username',

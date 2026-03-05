@@ -11,7 +11,7 @@ const proSettings: DefaultSettings ={
   "contentWidth": "Fluid",
   "fixedHeader": false,
   "fixSiderbar": true,
-  "title": "AKO Config Center",
+  "title": "H3000",
   "pwa": false,
   "iconfontUrl": "",
   "menu": {

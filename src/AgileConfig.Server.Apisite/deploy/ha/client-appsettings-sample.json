@@ -1,0 +1,16 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning"
+    }
+  },
+  "AgileConfig": {
+    "appId": "your_app_id",
+    "secret": "your_app_secret",
+    "nodes": "http://192.168.1.10:8050,http://192.168.1.11:8050,http://10.0.1.5:8050",
+    "name": "client_name",
+    "tag": "tag1",
+    "env": "PROD"
+  }
+}

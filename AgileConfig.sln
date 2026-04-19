@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
@@ -58,6 +58,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileConfig.Server.Event", "src\AgileConfig.Server.Event\AgileConfig.Server.Event.csproj", "{C1138EE0-0C28-4BDE-82CD-CCE621C21BD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileConfig.Server.EventHandler", "src\AgileConfig.Server.EventHandler\AgileConfig.Server.EventHandler.csproj", "{899F5AAE-2C6F-4F0A-9358-6F5C7D0412DC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgileConfig.Tools.MigrateSqliteToMongo", "src\AgileConfig.Tools.MigrateSqliteToMongo\AgileConfig.Tools.MigrateSqliteToMongo.csproj", "{B2C8F421-9A0E-4D3F-9B6C-1E2D3A4B5C6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -145,6 +147,10 @@ Global
 		{899F5AAE-2C6F-4F0A-9358-6F5C7D0412DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{899F5AAE-2C6F-4F0A-9358-6F5C7D0412DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{899F5AAE-2C6F-4F0A-9358-6F5C7D0412DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C8F421-9A0E-4D3F-9B6C-1E2D3A4B5C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C8F421-9A0E-4D3F-9B6C-1E2D3A4B5C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C8F421-9A0E-4D3F-9B6C-1E2D3A4B5C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C8F421-9A0E-4D3F-9B6C-1E2D3A4B5C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +176,7 @@ Global
 		{AC7E4D24-D5E8-4E30-BFB0-5DDC581CB0C2} = {F277EC27-8C0E-4490-9645-F5F3244F9246}
 		{C1138EE0-0C28-4BDE-82CD-CCE621C21BD0} = {1D2FD643-CB85-40F9-BC8A-CE4A39E9F43E}
 		{899F5AAE-2C6F-4F0A-9358-6F5C7D0412DC} = {1D2FD643-CB85-40F9-BC8A-CE4A39E9F43E}
+		{B2C8F421-9A0E-4D3F-9B6C-1E2D3A4B5C6D} = {1D2FD643-CB85-40F9-BC8A-CE4A39E9F43E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F10DB58-5B6F-4EAC-994F-14E8046B306F}

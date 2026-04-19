@@ -7,9 +7,10 @@
 
 set -e
 
-DEPLOY_DIR="/opt/agileconfig"
+DEPLOY_DIR="/opt/h3k_config_center/v1.11.3"
 REMOTE_TARGET=""
 RESTART_SERVICE=true
+SERVICE_USER="ak"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PUBLISH_DIR="/tmp/agileconfig-deploy-$$"
@@ -19,6 +20,7 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --deploy-dir) DEPLOY_DIR="$2"; shift 2 ;;
         --remote) REMOTE_TARGET="$2"; shift 2 ;;
+        --user) SERVICE_USER="$2"; shift 2 ;;
         --no-restart) RESTART_SERVICE=false; shift ;;
         *) echo "未知选项: $1"; exit 1 ;;
     esac
@@ -28,11 +30,11 @@ echo "=========================================="
 echo "  AgileConfig Server - 部署脚本"
 echo "=========================================="
 
-# 本地发布
+# 本地发布（必须指定 linux-x64，否则在 Windows 下会生成 win-x64 的 SQLite 等原生库导致 Linux 无法运行）
 do_publish() {
-    echo "[1] 发布项目..."
+    echo "[1] 发布项目（目标: linux-x64）..."
     cd "$PROJECT_ROOT"
-    dotnet publish AgileConfig.Server.Apisite.csproj -c Release -o "$PUBLISH_DIR"
+    dotnet publish AgileConfig.Server.Apisite.csproj -c Release -r linux-x64 -o "$PUBLISH_DIR"
 }
 
 # 本地部署
@@ -59,6 +61,7 @@ do_local_deploy() {
     cp -p /tmp/agileconfig-backup/appsettings.Production.json "$DEPLOY_DIR/" 2>/dev/null || true
     cp -p /tmp/agileconfig-backup/agile_config.db "$DEPLOY_DIR/" 2>/dev/null || true
     rm -rf /tmp/agileconfig-backup
+    chown -R "$SERVICE_USER:$SERVICE_USER" "$DEPLOY_DIR"
     if [[ "$RESTART_SERVICE" == "true" ]]; then
         echo "[4] 启动服务..."
         systemctl start agileconfig.service
@@ -73,9 +76,10 @@ do_remote_deploy() {
     echo "[3] 上传到 $REMOTE_TARGET ..."
     scp /tmp/agileconfig-deploy.tar.gz "$REMOTE_TARGET:/tmp/"
     echo "[4] 在远程主机执行部署..."
-    ssh "$REMOTE_TARGET" "sudo bash -s" -- "$DEPLOY_DIR" "$RESTART_SERVICE" << 'REMOTE_SCRIPT'
-DEPLOY_DIR="${1:-/opt/agileconfig}"
-RESTART="${2:-true}"
+    ssh "$REMOTE_TARGET" "sudo bash -s" -- "$DEPLOY_DIR" "$SERVICE_USER" "$RESTART_SERVICE" << 'REMOTE_SCRIPT'
+DEPLOY_DIR="${1:-/opt/h3k_config_center/v1.11.3}"
+SVC_USER="${2:-ak}"
+RESTART="${3:-true}"
 mkdir -p "$DEPLOY_DIR"
 # 备份配置与数据
 cp -p "$DEPLOY_DIR/appsettings.json" /tmp/ 2>/dev/null || true
@@ -86,6 +90,7 @@ cd /tmp && tar xzf agileconfig-deploy.tar.gz -C "$DEPLOY_DIR"
 cp -p /tmp/appsettings.json "$DEPLOY_DIR/" 2>/dev/null || true
 cp -p /tmp/appsettings.Production.json "$DEPLOY_DIR/" 2>/dev/null || true
 cp -p /tmp/agile_config.db "$DEPLOY_DIR/" 2>/dev/null || true
+chown -R "$SVC_USER:$SVC_USER" "$DEPLOY_DIR"
 rm -f agileconfig-deploy.tar.gz
 if [[ "$RESTART" == "true" ]]; then
     systemctl restart agileconfig.service

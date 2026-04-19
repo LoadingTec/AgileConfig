@@ -1,27 +1,33 @@
-<p align="center">
-    <img height="130" src="https://static.xbaby.xyz/blog/ac.png" style="height: 130px">
-</p>
-    
-<h1 align="center">AgileConfig</h1>
+# 内部发布测试验证位置：
+
+C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig.Server.Apisite\bin\Release\net10.0\publish
+
+dotnet AgileConfig.Server.Apisite.dll
 
 
 
-[![Member project of .NET Core Community](https://img.shields.io/badge/member%20project%20of-NCC-9e20c9.svg)](https://github.com/dotnetcore)
-![GitHub stars](https://img.shields.io/github/stars/dotnetcore/AgileConfig)
-![Nuget](https://img.shields.io/nuget/v/agileconfig.client?label=agileconfig.client)
-![Nuget](https://img.shields.io/nuget/dt/agileconfig.client?label=client%20download)
-![Docker image](https://img.shields.io/docker/v/kklldog/agile_config?label=docker%20image)
-![GitHub license](https://img.shields.io/github/license/dotnetcore/AgileConfig)
-![build workflow](https://github.com/dotnetcore/AgileConfig/actions/workflows/master-ci.yml/badge.svg)
-[![package workflow](https://github.com/dotnetcore/AgileConfig/actions/workflows/release-xxx.yml/badge.svg)](https://github.com/dotnetcore/AgileConfig/actions/workflows/release-xxx.yml)
-![Commit Date](https://img.shields.io/github/last-commit/dotnetcore/AgileConfig/master.svg?logo=github&logoColor=green&label=commit)
-    
 
+
+PS C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig.Server.Apisite\bin\Release\net10.0\publish
+
+# AgileConfig
+
+[Member project of .NET Core Community](https://github.com/dotnetcore)
+GitHub stars
+Nuget
+Nuget
+Docker image
+GitHub license
+build workflow
+[package workflow](https://github.com/dotnetcore/AgileConfig/actions/workflows/release-xxx.yml)
+Commit Date
 
 # [English](https://github.com/kklldog/AgileConfig/blob/master/README_EN.md) | [中文看这里](https://github.com/kklldog/AgileConfig/blob/master/README_CN.md)
 
 This is a lightweight configuration center based on .net core . It is easy to deploy , easy to learn , easy to use .
+
 ## 😍Features
+
 1. easy to deploy (docker or IIS)
 2. support distributed deploy
 3. multiple environments support
@@ -34,42 +40,52 @@ This is a lightweight configuration center based on .net core . It is easy to de
 10. support OpenTelemetry
 11. also can be use as a simple service register center
 12. role base user permission control
-    
-🔆🔆🔆Demo Project ：[AgileConfig Server Demo](http://agileconfig_server.xbaby.xyz)   name.pwd= admin/123456🔆🔆🔆   
-client project ：[AgileConfig_Client](https://github.com/kklldog/AgileConfig_Client)   
-samples ：    
-[AgileConfigMVCSample](https://github.com/kklldog/AgileConfig_Client/tree/master/AgileConfigMVCSample)   
-[AgileConfig WPFSample](https://github.com/kklldog/AgileConfig_Client/tree/master/AgileConfigWPFSample)    
+
+🔆🔆🔆Demo Project ：[AgileConfig Server Demo](http://agileconfig_server.xbaby.xyz)   name.pwd= admin/123456🔆🔆🔆  
+client project ：[AgileConfig_Client](https://github.com/kklldog/AgileConfig_Client)  
+samples ：  
+[AgileConfigMVCSample](https://github.com/kklldog/AgileConfig_Client/tree/master/AgileConfigMVCSample)  
+[AgileConfig WPFSample](https://github.com/kklldog/AgileConfig_Client/tree/master/AgileConfigWPFSample)  
 [AgileConfig ConsoleSample](https://github.com/kklldog/AgileConfig_Client/tree/master/AgileConfigConsoleSample)    
 
-Q&A:   
-https://github.com/dotnetcore/AgileConfig/wiki
- 
-API:   
+Q&A:  
+[https://github.com/dotnetcore/AgileConfig/wiki](https://github.com/dotnetcore/AgileConfig/wiki)
+
+API:  
 [restful api](https://github.com/dotnetcore/AgileConfig/wiki/Restful-API)
+
 ## ChangeLog
+
 [Changelog](https://github.com/dotnetcore/AgileConfig/blob/master/CHANGELOG.md)
+
 ## architecture
-![](https://s1.ax1x.com/2020/06/29/NRz1gO.png)
+
 ### client
+
 A .net client to read configurations from server node .
 
 ### node
+
 Node is just a .net core app . Client connect to the node in real time over websocket . Any node can be an admin console to manage configurations.
+
 ### database
-AgileConfig support most popular databases.    
-dbprovider :   
-sqlserver = SqlServer   
-mysql = MySql   
-sqlite = Sqlite   
-npgsql = PostgreSql   
+
+AgileConfig support most popular databases.  
+dbprovider :  
+sqlserver = SqlServer  
+mysql = MySql  
+sqlite = Sqlite  
+npgsql = PostgreSql  
 oracle = Oracle  
 mongodb = Mongodb
 
-## ✅️How to use ? 
+## ✅️How to use ?
+
 🎥[See video](https://www.bilibili.com/video/BV1FwqeYcEy9/?vd_source=767c7a8e20240041358ff961ab0cb9e5)
+
 ### run node on docker
-``` shell
+
+```shell
 sudo docker run \
 --name agile_config \
 -e TZ=Asia/Shanghai \
@@ -82,15 +98,19 @@ sudo docker run \
 -d kklldog/agile_config:latest
 ```
 
-After the docker instance has successfully started you can visit http://localhost:5000 . 
+After the docker instance has successfully started you can visit [http://localhost:5000](http://localhost:5000) . 
 
 ## use client
+
 install client lib from nuget：
+
 ```
 Install-Package AgileConfig.Client
 ```
+
 add a section in appsettings.json of you application：
-``` json
+
+```json
 {
   "Logging": {
     "LogLevel": {
@@ -113,8 +133,10 @@ add a section in appsettings.json of you application：
 }
 
 ```
+
 in Main function add agileconfig client services:
-``` c#
+
+```c#
    public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseAgileConfig()
@@ -125,8 +147,10 @@ in Main function add agileconfig client services:
 ```
 
 ## read configuration
+
 You can still use `IConfiguration` or `IOption` patten to get the specific configuration value.
-``` c#
+
+```c#
 public class HomeController : Controller
 {
     private readonly IConfiguration _IConfiguration;
@@ -142,7 +166,7 @@ public class HomeController : Controller
 
 Or you can use `IConfigClient` interface to get the specific configuration value.
 
-``` c#
+```c#
 public class HomeController : Controller
 {
     private readonly IConfigClient _configClient
@@ -172,9 +196,11 @@ public class HomeController : Controller
         return View();
     }
 }
-``` 
+```
+
 Or you can use a signleton instance without any injection.
-``` c#
+
+```c#
 var userid = ConfigClient.Instance["userid"]
 ```
 

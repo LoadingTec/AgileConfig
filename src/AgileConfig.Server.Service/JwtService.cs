@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -22,9 +22,9 @@ public class JwtService(ISysInitRepository sysInitRepository) : IJwtService
     //     settingService.TryInitJwtSecret();
     // }
 
-    public string Issuer => Global.Config["JwtSetting:Issuer"];
-    public string Audience => Global.Config["JwtSetting:Audience"];
-    public int ExpireSeconds => int.Parse(Global.Config["JwtSetting:ExpireSeconds"]);
+    public string Issuer => Global.Config["JwtSetting:Issuer"] ?? "agileconfig.admin";
+    public string Audience => Global.Config["JwtSetting:Audience"] ?? "agileconfig.admin";
+    public int ExpireSeconds => int.TryParse(Global.Config["JwtSetting:ExpireSeconds"], out var sec) ? sec : 86400;
 
     public string GetSecurityKey()
     {

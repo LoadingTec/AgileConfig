@@ -1,0 +1,38 @@
+# AgileConfig 高可用节点 - systemd 服务模板
+# 复制到 /etc/systemd/system/agileconfig.service 并按需修改
+# 注意：所有节点共用同一数据库，至少一个节点 adminConsole=true
+
+[Unit]
+Description=AgileConfig HA Node - H3K Config Center
+Documentation=https://github.com/dotnetcore/AgileConfig
+After=network.target
+
+[Service]
+Type=notify
+WorkingDirectory=/opt/h3k_config_center/v1.11.3
+ExecStart=/home/ak/dotnet10/dotnet /opt/h3k_config_center/v1.11.3/AgileConfig.Server.Apisite.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+User=ak
+Group=ak
+
+# === 高可用必须配置 ===
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=urls=http://*:8050
+
+# 共享数据库（所有节点一致）
+Environment=db:provider=mysql
+Environment=db:conn=Server=192.168.1.100;Database=agileconfig_ha;User=agileconfig;Password=xxx;Port=3306
+
+# 管理控制台：至少一个节点为 true
+Environment=adminConsole=true
+
+# 集群模式：同网段可 true 自动注册；跨网段建议 false，在控制台手动添加节点
+Environment=cluster=true
+
+# 可选：超级管理员密码
+# Environment=saPassword=your_sa_password
+
+[Install]
+WantedBy=multi-user.target

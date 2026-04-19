@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Reflection;
 using AgileConfig.Server.Common;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -31,10 +31,7 @@ public class Program
             Global.Config = builder.AddJsonFile("appsettings.json").AddEnvironmentVariables().Build();
 #endif
 
-        var host = CreateWebHostBuilder(args)
-            .Build();
-
-        host.Run();
+        CreateHostBuilder(args).Build().Run();
     }
 
     private static void PrintBasicSysInfo()
@@ -47,13 +44,16 @@ public class Program
         Console.WriteLine("Path: {0}", basePath);
     }
 
-    private static IWebHostBuilder CreateWebHostBuilder(string[] args)
-    {
-        return WebHost.CreateDefaultBuilder(args).ConfigureLogging((context, builder) => { AddOtlpLogging(builder); }
-            )
-            .UseConfiguration(Global.Config)
-            .UseStartup<Startup>();
-    }
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseWindowsService()
+            .UseSystemd()
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.ConfigureLogging((_, builder) => AddOtlpLogging(builder))
+                    .UseConfiguration(Global.Config)
+                    .UseStartup<Startup>();
+            });
 
     private static void AddOtlpLogging(ILoggingBuilder builder)
     {

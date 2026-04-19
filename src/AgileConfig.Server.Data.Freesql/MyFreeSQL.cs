@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using AgileConfig.Server.Data.Abstraction.DbProvider;
 using FreeSql;
@@ -38,8 +38,13 @@ public class MyFreeSQL : IMyFreeSQL
         {
             if (_envFreesqls.ContainsKey(key)) return _envFreesqls[key];
 
+            var connStr = dbConfig.ConnectionString;
+            // SQLite 并发时易出现 "database is locked"，增加 Busy Timeout 等待而非立即失败
+            if (dbType == DataType.Sqlite && !connStr.Contains("Busy", StringComparison.OrdinalIgnoreCase))
+                connStr = connStr.TrimEnd(';') + ";Busy Timeout=15000";
+
             var sql = new FreeSqlBuilder()
-                .UseConnectionString(dbType.Value, dbConfig.ConnectionString)
+                .UseConnectionString(dbType.Value, connStr)
                 .Build();
             ApplyDatabaseStructrue(sql);
 

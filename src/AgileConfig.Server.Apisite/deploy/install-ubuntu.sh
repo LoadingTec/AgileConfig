@@ -11,10 +11,11 @@
 
 set -e
 
-# 默认配置
-DEPLOY_DIR="/opt/agileconfig"
-SERVICE_USER="agileconfig"
-SERVICE_GROUP="agileconfig"
+# 默认配置（与 H3K Config Center 部署一致）
+DEPLOY_DIR="/opt/h3k_config_center/v1.11.3"
+SERVICE_USER="ak"
+SERVICE_GROUP="ak"
+DOTNET_PATH="/home/ak/dotnet10/dotnet"
 PORT=5000
 SELF_CONTAINED=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,6 +27,7 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --deploy-dir) DEPLOY_DIR="$2"; shift 2 ;;
         --user) SERVICE_USER="$2"; shift 2 ;;
+        --dotnet-path) DOTNET_PATH="$2"; shift 2 ;;
         --port) PORT="$2"; shift 2 ;;
         --self-contained) SELF_CONTAINED=true; shift ;;
         *) echo "未知选项: $1"; exit 1 ;;
@@ -59,8 +61,8 @@ if [[ "$SELF_CONTAINED" != "true" ]]; then
     echo "  .NET 已安装: $(dotnet --version)"
 fi
 
-# 2. 创建服务用户
-echo "[2/6] 创建服务用户 $SERVICE_USER..."
+# 2. 检查服务用户（ak 等 sudo 组成员通常已存在）
+echo "[2/6] 检查服务用户 $SERVICE_USER..."
 if ! id "$SERVICE_USER" &>/dev/null; then
     useradd -r -s /bin/false -d "$DEPLOY_DIR" "$SERVICE_USER"
     echo "  用户已创建"
@@ -84,7 +86,8 @@ if [[ -f "AgileConfig.Server.Apisite.csproj" ]]; then
         cp -r /tmp/agileconfig-publish/* "$DEPLOY_DIR/"
         rm -rf /tmp/agileconfig-publish
     else
-        dotnet publish AgileConfig.Server.Apisite.csproj -c Release -o "$DEPLOY_DIR"
+        # 框架依赖发布也需指定 linux-x64，确保 SQLite 等原生库正确
+        dotnet publish AgileConfig.Server.Apisite.csproj -c Release -r linux-x64 -o "$DEPLOY_DIR"
     fi
     echo "  发布完成"
 else
@@ -115,7 +118,7 @@ EOF
 if [[ "$SELF_CONTAINED" == "true" ]]; then
     echo "ExecStart=$DEPLOY_DIR/AgileConfig.Server.Apisite" >> "$SERVICE_FILE"
 else
-    echo "ExecStart=/usr/bin/dotnet $DEPLOY_DIR/AgileConfig.Server.Apisite.dll" >> "$SERVICE_FILE"
+    echo "ExecStart=$DOTNET_PATH $DEPLOY_DIR/AgileConfig.Server.Apisite.dll" >> "$SERVICE_FILE"
 fi
 cat >> "$SERVICE_FILE" << EOF
 Restart=always

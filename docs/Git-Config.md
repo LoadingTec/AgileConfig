@@ -1,4 +1,4 @@
-# GitLab 与仓库远程（HTTP）配置
+# GitLab 与仓库远程（HTTP / SSH）配置
 
 ## 环境说明
 
@@ -6,7 +6,8 @@
 |----|-----|
 | Web 控制台 | `http://192.168.201.139:9080/hgroup/akcc` |
 | HTTP 克隆/推送地址 | `http://192.168.201.139:9080/hgroup/akcc.git` |
-| SSH（容器内主机名示例） | `git@cfb0ac84500c:hgroup/akcc.git`，宿主机映射端口 **2022→22** |
+| SSH（宿主机） | `ssh://git@192.168.201.139:2022/hgroup/akcc.git`（端口 **2022→容器 22**） |
+| SSH（容器内主机名示例） | `git@cfb0ac84500c:hgroup/akcc.git`（仅在能解析该主机名时使用） |
 
 GitLab 容器示例（`docker ps` 节选）：
 
@@ -32,6 +33,51 @@ git remote -v
 git remote add gitlab-http http://192.168.201.139:9080/hgroup/akcc.git
 git remote -v
 ```
+
+### 1.1 增加 SSH 远程（推荐，避免 HTTP 被 GCM 拒绝）
+
+在 **Windows** 上使用 **明文 HTTP** 访问 GitLab 时，Git Credential Manager 可能报错：
+
+`fatal: Unencrypted HTTP is not recommended for GitLab...`
+
+处理方式二选一：**改用 HTTPS**（若 GitLab 已开 8443 等），或 **改用 SSH 推送**。本环境 Web 为 `9080`，SSH 映射为 **`192.168.201.139:2022`**，可增加远程名 `gitlab-ssh`：
+
+```bash
+git remote add gitlab-ssh ssh://git@192.168.201.139:2022/hgroup/akcc.git
+git remote -v
+```
+
+若名称已存在：
+
+```bash
+git remote set-url gitlab-ssh ssh://git@192.168.201.139:2022/hgroup/akcc.git
+```
+
+**首次推送并建立上游**（分支名按实际，如 `dev-deploy`）：
+
+```bash
+git push --set-upstream gitlab-ssh dev-deploy
+```
+
+需已在 GitLab 账户中配置 **SSH 公钥**，且本机能访问 `192.168.201.139:2022`。首次连接若提示 host key 确认，输入 `yes` 即可。
+
+#### 可选：用 `~/.ssh/config` 写成短地址
+
+```text
+Host gitlab-hgroup-akcc
+  HostName 192.168.201.139
+  Port 2022
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+然后：
+
+```bash
+git remote add gitlab-ssh git@gitlab-hgroup-akcc:hgroup/akcc.git
+```
+
+与 `ssh://git@192.168.201.139:2022/hgroup/akcc.git` 等价，便于换密钥或换 IP。
 
 若该名称已存在，可改为更新 URL：
 
@@ -62,10 +108,13 @@ git commit -m "chore: sync integrated sources"   # 若已有提交可省略
 # 推到原有远程（保持习惯不变）
 git push origin main
 
-# 推到 HTTP 内网 GitLab
+# 推到 HTTP 内网 GitLab（若本机 GCM 禁止明文 HTTP，请改用下方 SSH）
 git push --set-upstream gitlab-http main       # 首次为该远程建立上游
 # 之后可简写为：
 git push gitlab-http main
+
+# 推到 SSH 内网 GitLab（推荐，见 §1.1）
+git push --set-upstream gitlab-ssh main
 ```
 
 **首次**为某个远程建立跟踪后，也可在对应远程上指定默认上游（按需）：

@@ -95,6 +95,21 @@ Server=192.168.1.100;Database=agileconfig_ha;User=agileconfig;Password=YourSecur
 
 客户端可将 `nodes` 配为 **单个** 负载均衡地址，例如 `http://192.168.1.88:8050`（LB 再转发到多节点）。
 
+- **Windows 本机实践**：以 Nginx **8538** 作为统一入口的完整 `nginx.conf` 与步骤见 [nginx-windows-8538.md](./nginx-windows-8538.md)（配置文件 [nginx-windows-agileconfig-8538.conf](./nginx-windows-agileconfig-8538.conf)）。
+
+### 步骤 D 补充：Nginx 入口自身的高可用（可选）
+
+`nginx-lb.conf` 解决的是 **多台 AgileConfig 节点** 的负载均衡；若只有 **一台** Nginx 对外，入口仍是单点。生产上常再对「反代层」做高可用，典型思路包括：
+
+- **Keepalived + 虚拟 IP（VIP）**：两台（或多台）主机部署相同 Nginx 与 `upstream` 配置，通过 VRRP 漂移 **同一 VIP**；主节点故障或本机 Nginx 异常时，备机接管 VIP，客户端仍访问同一 `http(s)://VIP:端口`。
+- 可配合 **健康检查脚本**（检测 `nginx` 进程或本地反代端口），在进程不可用时降低本机优先级，促使 VIP 迁移。
+
+安装步骤、`keepalived.conf` 中 `vrrp_instance`、`virtual_ipaddress`、`priority`、与 Nginx 联动等，可参考社区整理：
+
+- [NGINX 维护集群高可用相关方案（CSDN 示例文）](https://blog.csdn.net/gitblog_00077/article/details/139110355)
+
+与本仓库的关系：AgileConfig 侧仍为多节点 + 共享库；**客户端 `nodes` 填对业务可见的 VIP 或域名**（解析到 VIP）即可，无需改应用协议。若使用 HTTPS，证书应签在客户端实际访问的域名或 VIP 对应主机名上（按你们证书策略）。
+
 ---
 
 ## 4. 配置项对照（服务端）
@@ -205,6 +220,7 @@ AgileConfig__secret=your_app_secret
 - [ ] 从第二台节点起，接口与健康检查在直连 IP 下可访问。
 - [ ] 测试客户端：`nodes` 只填其中一台时可用；故意停一台后仍可拉取配置（多地址或 LB 场景）。
 - [ ] 若使用 Nginx：WebSocket 连通（浏览器或客户端日志无长连失败）。
+- [ ] 若对入口做了 **双机 Nginx + Keepalived/VIP**：主备切换后，同一 VIP 下 WebSocket 与控制台仍可用。
 
 ---
 
@@ -239,4 +255,7 @@ AgileConfig__secret=your_app_secret
 | [appsettings.ha-template.json](./appsettings.ha-template.json) | 服务端 HA 模板 |
 | [agileconfig-ha.service](./agileconfig-ha.service) | systemd 模板 |
 | [nginx-lb.conf](./nginx-lb.conf) | Nginx 负载均衡 + WebSocket |
+| [nginx-windows-8538.md](./nginx-windows-8538.md) | Windows 上 Nginx 入口 **8538** 实践步骤 |
+| [nginx-windows-agileconfig-8538.conf](./nginx-windows-agileconfig-8538.conf) | Windows 用完整 `nginx.conf` 示例（`listen 8538`） |
 | [client-appsettings-sample.json](./client-appsettings-sample.json) | 客户端 `appsettings` 样例 |
+| [../nodes/README.md](../nodes/README.md) | Windows 三节点（8051/8052/8053）+ Nginx 负载示例 |

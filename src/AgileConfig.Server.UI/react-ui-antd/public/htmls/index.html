@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>H3000 暗场晶圆检测设备 — 产品介绍</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2b;
+      --text: #e8eefc;
+      --muted: #9aa8c4;
+      --accent: #3d8bfd;
+      --accent2: #22d3ee;
+      --border: #243047;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #1a2744 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    header {
+      padding: 2.5rem 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(61,139,253,0.12), transparent);
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      font-weight: 650;
+      letter-spacing: 0.02em;
+    }
+    .tagline { color: var(--muted); font-size: 1.05rem; max-width: 52rem; }
+    .badge {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--accent2);
+      border: 1px solid rgba(34,211,238,0.35);
+      background: rgba(34,211,238,0.08);
+    }
+    h2 {
+      margin: 2.25rem 0 0.75rem;
+      font-size: 1.25rem;
+      color: #fff;
+      border-left: 4px solid var(--accent);
+      padding-left: 0.65rem;
+    }
+    h3 { margin: 1.35rem 0 0.5rem; font-size: 1.05rem; color: #c5d4f5; }
+    p { margin: 0.5rem 0 0.85rem; color: var(--muted); }
+    ul { margin: 0.35rem 0 0.85rem; padding-left: 1.25rem; color: var(--muted); }
+    li { margin: 0.35rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0 1rem;
+      font-size: 0.92rem;
+      background: var(--panel);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    th, td { padding: 0.65rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: #dbe7ff; font-weight: 600; background: rgba(61,139,253,0.12); }
+    tr:last-child td { border-bottom: none; }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      max-width: 52rem;
+    }
+    .nav-grid a {
+      display: block;
+      padding: 0.8rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      text-align: center;
+      transition: border-color .15s ease, background .15s ease, transform .12s ease;
+    }
+    .nav-grid a:hover {
+      border-color: rgba(61, 139, 253, 0.55);
+      background: rgba(61, 139, 253, 0.12);
+      transform: translateY(-1px);
+    }
+    .nav-grid a .sub {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--muted);
+      font-family: ui-monospace, Consolas, monospace;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    code { color: var(--accent2); font-size: 0.88em; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>H3000 暗场晶圆检测设备</h1>
+      <p class="tagline">
+        面向先进制程与高密度互连的<strong>暗场（Dark-field）</strong>光学成像平台，用于整片晶圆表面及近表面缺陷的高速、高灵敏度筛查，
+        支撑前道制程监控、来料检与出货检等场景下的<strong>颗粒、划痕、残留、图形异常</strong>等缺陷检出与分类。
+      </p>
+      <span class="badge">暗场成像 · 全晶圆扫描 · 智能判图</span>
+
+      <nav class="nav-grid" aria-label="系统快捷入口">
+        <a href="/config/ui#/"><span>配置中心</span><span class="sub">config → LB → :8051/:8052/:8053</span></a>
+        <a href="/download"><span>下载更新</span><span class="sub">download</span></a>
+        <a href="/logseq/"><span>日志中心</span><span class="sub">logseq → :5341</span></a>
+        <a href="/admin"><span>管理后台</span><span class="sub">admin → :9090</span></a>
+        <a href="/monitor/"><span>监控面板</span><span class="sub">monitor → :8090</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h2>一、产品定位与适用场景</h2>
+    <p>
+      H3000 系列定位为<strong>中到高灵敏度暗场晶圆检测系统</strong>，在保持较高吞吐的前提下，对亚微米级散射体与微弱划痕具备增强对比度。
+      典型应用包括：CMP 后清洗与研磨监控、薄膜沉积与刻蚀后表面残留、光刻胶与硬掩模缺陷、键合/封装前晶圆外观检、以及部分 MEMS / 功率器件晶圆的颗粒与裂纹筛查。
+    </p>
+
+    <h2>二、暗场检测原理（简述）</h2>
+    <p>
+      <strong>暗场成像</strong>通过遮挡或偏离镜面反射方向的直射光，仅采集由表面微结构、颗粒、划痕等引起的<strong>散射光</strong>。
+      与明场相比，暗场对微小凸起、薄膜起伏及亚波长缺陷往往具有<strong>更高信噪比</strong>，尤其适合弱对比、低反射背景下的缺陷凸显。
+    </p>
+    <ul>
+      <li>多角度或多通道暗场照明，可抑制特定方向的眩光并增强缺陷类型可分性。</li>
+      <li>与精密载物台、同步触发与高速相机链路配合，实现整片晶圆<strong>步进或连续扫描</strong>。</li>
+      <li>结合标定与补偿算法，降低翘曲、厚度不均带来的伪影。</li>
+    </ul>
+
+    <h2>三、系统组成与数据流</h2>
+    <h3>3.1 硬件子系统</h3>
+    <ul>
+      <li><strong>光学与照明</strong>：高稳定激光或 LED 窄带光源、暗场照明模组、收光物镜与滤光组件。</li>
+      <li><strong>运动与对准</strong>：真空或边缘夹持载台、精密 XY（及可选 θ）轴、预对准与中心定位传感器。</li>
+      <li><strong>成像链路</strong>：高分辨率面阵或线阵探测器、低噪声读出、与扫描节拍锁相的触发单元。</li>
+      <li><strong>整机与环控</strong>：隔振基座、温湿度与洁净度受控腔体（视配置）、安全联锁与急停。</li>
+    </ul>
+    <h3>3.2 软件与算法</h3>
+    <ul>
+      <li><strong>扫描与拼接</strong>：视场规划、重叠区融合、几何畸变与照度均匀性校正。</li>
+      <li><strong>缺陷检测</strong>：自适应阈值、形态学与纹理特征、多尺度 blob / 线状缺陷提取。</li>
+      <li><strong>分类与溯源</strong>：基于规则与统计学习或深度学习的缺陷编码（如 DOI / size / contrast），支持 SPC 与批次对比。</li>
+      <li><strong>数据管理</strong>：配方（Recipe）、用户权限、审计追踪、与 MES / YMS 的接口（按项目启用）。</li>
+    </ul>
+
+    <h2>四、主要能力亮点</h2>
+    <ul>
+      <li><strong>高灵敏度暗场</strong>：针对纳米颗粒、浅划痕、薄膜雾度等弱信号缺陷优化光学与增益策略。</li>
+      <li><strong>全片覆盖</strong>：支持主流晶圆直径（如 200 mm / 300 mm，具体以出厂配置为准），边缘排除区可配方设定。</li>
+      <li><strong>吞吐与分辨率平衡</strong>：多档分辨率与扫描速度，可在工程验证与量产监控间切换。</li>
+      <li><strong>可重复性</strong>：温漂与光源功率监控、定期自标定流程，保障跨班次、跨批次数据可比。</li>
+      <li><strong>人机工程</strong>：一键加载配方、缺陷地图与 die 级回溯、报告导出（PDF / CSV 等）。</li>
+    </ul>
+
+    <h2>五、典型技术指标（示例档，以出厂规格书为准）</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>项目</th>
+          <th>说明（示例）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>晶圆尺寸</td>
+          <td>200 mm / 300 mm（可选配置）</td>
+        </tr>
+        <tr>
+          <td>空间分辨率</td>
+          <td>亚微米至数微米 / pixel（依物镜与相机配置）</td>
+        </tr>
+        <tr>
+          <td>缺陷检出</td>
+          <td>颗粒、划痕、残留、气泡、局部雾度、部分图形异常等</td>
+        </tr>
+        <tr>
+          <td>扫描方式</td>
+          <td>步进扫描或连续扫描（依机型）</td>
+        </tr>
+        <tr>
+          <td>数据输出</td>
+          <td>缺陷列表、晶圆图、分类统计、可选图片裁剪块</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>六、工艺流程中的位置</h2>
+    <p>
+      H3000 通常部署在<strong>关键工艺站之后</strong>或<strong>出货前终检</strong>工位，与明场检测、电性测试、良率分析等形成互补：
+      暗场擅长早期发现<strong>散射敏感型</strong>缺陷，降低后续报废与返工成本；与制程参数、机台事件关联后，可支撑根因分析与闭环控制。
+    </p>
+
+    <h2>七、安装、维护与安全</h2>
+    <ul>
+      <li><strong>安装条件</strong>：建议独立防震基础、稳定电源与接地、符合洁净等级的使用环境。</li>
+      <li><strong>维护</strong>：光源寿命与强度监测、光学窗口清洁、载台与真空耗材更换周期按维护手册执行。</li>
+      <li><strong>安全</strong>：互锁门、激光/强光警示、急停与权限分级；操作员需完成激光与机械安全培训。</li>
+    </ul>
+
+    <footer>
+      H3000 暗场晶圆检测设备 · 产品介绍页 · 由项目静态资源目录托管
+    </footer>
+  </main>
+</body>
+</html>

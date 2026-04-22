@@ -157,6 +157,8 @@ server {
 
 客户端可将 `nodes` 配置为负载均衡地址，实现统一入口。
 
+若需消除 **单台 Nginx** 的单点风险，可在反代层再做 **Keepalived + VIP** 等「入口高可用」；概念与部署顺序见 [HA-Deploy.md](./HA-Deploy.md) **步骤 D 补充**，亦可参考 [CSDN：NGINX 集群高可用类实践](https://blog.csdn.net/gitblog_00077/article/details/139110355)。
+
 ---
 
 ## 六、部署检查清单
@@ -189,3 +191,4 @@ server {
 - `appsettings.ha-template.json` - HA 配置模板
 - `agileconfig-ha.service` - systemd 服务模板
 - `nginx-lb.conf` - Nginx 负载均衡配置示例
+- `nginx-windows-8538.md` / `nginx-windows-agileconfig-8538.conf` - Windows 入口端口 **8538** 的完整实践示例

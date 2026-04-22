@@ -1,0 +1,647 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AgileConfig.Server.Apisite</name>
+    </assembly>
+    <members>
+        <member name="P:AgileConfig.Server.Apisite.Appsettings.IsPreviewMode">
+            <summary>
+                Indicates whether the server runs in demo mode.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Appsettings.IsAdminConsoleMode">
+            <summary>
+                Indicates whether the admin console mode is enabled.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Appsettings.Cluster">
+            <summary>
+                Indicates whether the cluster auto-join feature is enabled.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Appsettings.PathBase">
+            <summary>
+                path base
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Appsettings.SsoEnabled">
+            <summary>
+                Indicates whether single sign-on is enabled.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Appsettings.SsoButtonText">
+            <summary>
+                SSO button text
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.AdminController.PasswordInited">
+            <summary>
+                is password inited ?
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.AdminController.InitPassword(AgileConfig.Server.Apisite.Models.InitPasswordVM)">
+            <summary>
+                Initialize the administrator password.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.api.AppController">
+            <summary>
+                Application management API.
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.GetAll">
+            <summary>
+                Get all applications.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.GetById(System.String)">
+            <summary>
+                Get an application by its identifier.
+            </summary>
+            <param name="id">Application ID.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.Add(AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM)">
+            <summary>
+                Create a new application.
+            </summary>
+            <param name="model">Application payload.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.Edit(System.String,AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM)">
+            <summary>
+                Update an existing application.
+            </summary>
+            <param name="id">Application ID.</param>
+            <param name="model">Application payload.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.Delete(System.String)">
+            <summary>
+                Delete an application.
+            </summary>
+            <param name="id">Application ID.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.Publish(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Publish pending configuration items of an application.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.PublishHistory(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Retrieve the publish history of an application.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.AppController.Rollback(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Roll back the application to the configuration at the specified publish history entry.
+            </summary>
+            <param name="historyId">Publish history identifier.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.ConfigController.GetAppConfig(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Retrieve all published configuration items for an application, including inherited entries.
+                Note: this endpoint authenticates with appId and secret instead of username and password.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.ConfigController.GetConfigs(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Retrieve configuration items for an application, which may include unpublished items.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.ConfigController.GetConfig(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Get configuration details by identifier.
+            </summary>
+            <param name="id">Configuration identifier.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.ConfigController.Add(AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Create a configuration item.
+            </summary>
+            <param name="model">Configuration payload.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.ConfigController.Edit(System.String,AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Edit a configuration item.
+            </summary>
+            <param name="id">Configuration identifier.</param>
+            <param name="model">Configuration payload.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.ConfigController.Delete(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Delete a configuration item.
+            </summary>
+            <param name="id">Configuration identifier.</param>
+            <param name="env">Target environment.</param>
+            <returns></returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM">
+            <summary>
+                Application model returned by the REST API.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM.Inheritanced">
+            <summary>
+                Whether the application can inherit configuration.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM.Secret">
+            <summary>
+                Application secret.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM.Enabled">
+            <summary>
+                Whether the application is enabled.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM.InheritancedApps">
+            <summary>
+                Applications inherited by this application.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM.Id">
+            <summary>
+                id
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiAppVM.Name">
+            <summary>
+                name
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.Id">
+            <summary>
+                id
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.Group">
+            <summary>
+                Configuration group name.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.Key">
+            <summary>
+                Configuration key.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.Value">
+            <summary>
+                Configuration value.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.Status">
+            <summary>
+                Configuration status.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.OnlineStatus">
+            <summary>
+                Online status for the configuration.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.EditStatus">
+            <summary>
+                Editing status for the configuration.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.Description">
+            <summary>
+                Description of the configuration.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiConfigVM.AppId">
+            <summary>
+                Application ID.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiNodeVM.Address">
+            <summary>
+                Node address.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiNodeVM.Remark">
+            <summary>
+                Remarks.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiNodeVM.Status">
+            <summary>
+                Node status.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiNodeVM.LastEchoTime">
+            <summary>
+                Time of the last echo response.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.Id">
+            <summary>
+                Publish record identifier.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.AppId">
+            <summary>
+                Application ID.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.PublishTime">
+            <summary>
+                Publish time.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.PublishUserId">
+            <summary>
+                Publisher.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.Version">
+            <summary>
+                Publish version number.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.Log">
+            <summary>
+                Publish log text.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Controllers.api.Models.ApiPublishTimelineVM.Env">
+            <summary>
+                Environment identifier.
+            </summary>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.api.NodeController">
+            <summary>
+                Node management API.
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.NodeController.GetAll">
+            <summary>
+                Get all nodes.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.NodeController.Add(AgileConfig.Server.Apisite.Controllers.api.Models.ApiNodeVM)">
+            <summary>
+                Create a node.
+            </summary>
+            <param name="model">Node payload.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.api.NodeController.Delete(System.String)">
+            <summary>
+                Delete a node by address.
+            </summary>
+            <param name="address">Node address.</param>
+            <returns></returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.api.RegisterCenterController">
+            <summary>
+                Service registration center API.
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.AppController.InheritancedApps(System.String)">
+            <summary>
+                Get all applications that can be inherited.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.AppController.SaveAppAuth(AgileConfig.Server.Apisite.Models.AppAuthVM)">
+            <summary>
+                Save application authorization information.
+            </summary>
+            <param name="model">View model containing authorization assignments.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.IsOnlyUpdateDescription(AgileConfig.Server.Data.Entity.Config,AgileConfig.Server.Data.Entity.Config)">
+            <summary>
+                Determine whether only the description field changed.
+            </summary>
+            <param name="newConfig">Configuration submitted by the client.</param>
+            <param name="oldConfig">Existing configuration stored in the database.</param>
+            <returns>True when only the description differs.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.Search(System.String,System.String,System.String,System.Nullable{AgileConfig.Server.Data.Entity.OnlineStatus},System.String,System.String,AgileConfig.Server.Apisite.Models.EnvString,System.Int32,System.Int32)">
+            <summary>
+                Search configurations with multiple filter conditions.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <param name="group">Configuration group.</param>
+            <param name="key">Configuration key.</param>
+            <param name="onlineStatus">Filter by online status.</param>
+            <param name="pageSize">Number of items per page.</param>
+            <param name="current">Current page number.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.Publish(AgileConfig.Server.Apisite.Models.PublishLogVM,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Publish all pending configuration items.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.PreViewJsonFile">
+            <summary>
+                Preview an uploaded JSON configuration file.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.ExportJson(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Export an application's configurations as a JSON file.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.WaitPublishStatus(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Get counts of configuration changes that are waiting to be published.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.PublishHistory(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Retrieve the publish history details for an application.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ConfigController.GetJson(System.String,AgileConfig.Server.Apisite.Models.EnvString)">
+            <summary>
+                Get configuration content in JSON format.
+            </summary>
+            <param name="appId">Application ID.</param>
+            <returns></returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.RemoteOpController">
+            <summary>
+                Receives commands sent from other nodes.
+            </summary>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.RemoteServerProxyController">
+            <summary>
+                Handles console web requests that proxy operations to remote server nodes (distinct from RemoteOpController).
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.RemoteServerProxyController.Client_Offline(System.String,System.String)">
+            <summary>
+                Notify a node to disconnect a specific client.
+            </summary>
+            <param name="address">Remote node address.</param>
+            <param name="clientId">Client identifier to disconnect.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.RemoteServerProxyController.AllClients_Reload">
+            <summary>
+                Notify a node to instruct all clients to reload configuration.
+            </summary>
+            <param name="address">Remote node address.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.RemoteServerProxyController.Client_Reload(System.String,System.String)">
+            <summary>
+                Notify a node to instruct a single client to reload configuration.
+            </summary>
+            <param name="address">Remote node address.</param>
+            <param name="clientId">Client identifier to reload.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Controllers.ReportController">
+            <summary>
+                Reports node status information, such as connected clients.
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ReportController.Clients">
+            <summary>
+                Get client connections on the current node.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ReportController.ServerNodeClients(System.String)">
+            <summary>
+                Get client connections on a specific node.
+            </summary>
+            <param name="address">Server address to inspect.</param>
+            <returns>JSON result containing the client report.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ReportController.AppCount">
+            <summary>
+                Get the number of enabled applications.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ReportController.ConfigCount">
+            <summary>
+                Get the number of enabled configuration items.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ReportController.NodeCount">
+            <summary>
+                Get the number of server nodes.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.ReportController.RemoteNodesStatus">
+            <summary>
+                Get status information for all nodes.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Controllers.SsoController.Index(System.String)">
+            <summary>
+                pass the oidc code to frontend
+            </summary>
+            <param name="code">Authorization code returned by the OIDC provider.</param>
+            <returns>Redirect to the admin UI with the provided code.</returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Filters.AdmBasicAuthenticationAttribute">
+            <summary>
+                Action filter that enforces basic authentication for administrator requests.
+            </summary>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Filters.AppBasicAuthenticationAttribute">
+            <summary>
+                Action filter that enforces basic authentication for application clients.
+            </summary>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Filters.PermissionCheckByBasicAttribute">
+            <summary>
+                Permission check that reads user information from the basic authentication header.
+            </summary>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Models.Mapping.AppExtension">
+            <summary>
+                Do not ask me why not use AutoMapper, I don't know. Just like manual mapping, it's simple and clear.
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Models.SaveJsonVM.isPatch">
+            <summary>
+                Indicates whether to update existing configuration entries in patch mode.
+                <para>true (patch mode): only modify the entries included in the current submission.</para>
+                <para>false (full mode, default): remove any existing entries that are not present in the current submission.</para>
+            </summary>
+        </member>
+        <member name="P:AgileConfig.Server.Apisite.Models.SaveKVListVM.isPatch">
+            <summary>
+                Indicates whether to update existing configuration entries in patch mode.
+                <para>true (patch mode): only modify the entries included in the current submission.</para>
+                <para>false (full mode, default): remove any existing entries that are not present in the current submission.</para>
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.UIExtension.ReactUiMiddleware.RewriteIndexHtml(System.String)">
+            <summary>
+                To support path base, make injected JS and CSS in index.html use relative paths by removing the leading slash.
+            </summary>
+            <param name="filePath">Absolute path to the index.html file to rewrite.</param>
+            <returns>Task that completes when the file has been rewritten.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Utilites.ControllerExt.GetCurrentUserName(Microsoft.AspNetCore.Mvc.Controller)">
+            <summary>
+                Retrieve the current user name, preferring claims and falling back to basic authentication.
+            </summary>
+            <param name="ctrl">Controller instance.</param>
+            <returns>User name of the current principal.</returns>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Utilites.ControllerExt.GetCurrentUserId(Microsoft.AspNetCore.Mvc.Controller,AgileConfig.Server.IService.IUserService)">
+            <summary>
+                Retrieve the current user ID, preferring claims and falling back to a database lookup using basic authentication.
+            </summary>
+            <param name="ctrl">Controller instance.</param>
+            <param name="userService">User service used to resolve credentials when claims are absent.</param>
+            <returns>User identifier of the current principal.</returns>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Websocket.MessageHandlers.MessageHandler">
+            <summary>
+                Message handler.
+            </summary>
+        </member>
+        <member name="T:AgileConfig.Server.Apisite.Websocket.MessageHandlers.OldMessageHandler">
+            <summary>
+                Message handler used to remain compatible with legacy clients.
+            </summary>
+        </member>
+        <member name="M:AgileConfig.Server.Apisite.Websocket.WebsocketHandlerMiddleware.Handle(Microsoft.AspNetCore.Http.HttpContext,AgileConfig.Server.Apisite.Websocket.WebsocketClient,AgileConfig.Server.IService.IConfigService,AgileConfig.Server.IService.IRegisterCenterService,AgileConfig.Server.IService.IServiceInfoService)">
+            <summary>
+                Handle messages from clients.
+                If the payload is "ping", it is the legacy client heartbeat message.
+                Messages starting with "c:" come from configuration center clients.
+                Messages starting with "s:" come from service center clients.
+            </summary>
+            <param name="context">HTTP context associated with the websocket connection.</param>
+            <param name="socketClient">Active websocket client wrapper.</param>
+            <param name="configService">Configuration service used to respond to configuration messages.</param>
+            <param name="registerCenterService">Registration center service used to process registry updates.</param>
+            <param name="serviceInfoService">Service information service used for service center messages.</param>
+        </member>
+        <member name="T:Figgle.EmbedFiggleFontAttribute">
+            <summary>
+            Instructs a source generator to embed a Figgle font in the assembly, making it available
+            via a static property on class this attribute is applied to.
+            </summary>
+            <remarks>
+            <para>
+            This attribute is processed by a source generator in the <c>Figgle.Generator</c> package.
+            </para>
+            <para>
+            This source generator will embed the specified Figgle font into your assembly, which is a
+            more performant alternative to using the <c>Figgle.Fonts</c> package, which embeds all of
+            the Figgle fonts.
+            </para>
+            <para>
+            If the text you want Figgle to render is not statically known at compile time, you should
+            use this generator and ship the <c>Figgle</c> package.
+            </para>
+            <para>
+            If the text you want Figgle to render is statically known at compile time, you should use
+            <see cref="T:Figgle.GenerateFiggleTextAttribute" /> instead.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Figgle.EmbedFiggleFontAttribute.MemberName">
+            <summary>
+            The name of the property to add, whose getter will return the embedded <see cref="T:Figgle.FiggleFont" />.
+            </summary>
+        </member>
+        <member name="P:Figgle.EmbedFiggleFontAttribute.FontName">
+            <summary>
+            The name of the font to use when rendering the text.
+            </summary>
+        </member>
+        <member name="M:Figgle.EmbedFiggleFontAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Figgle.EmbedFiggleFontAttribute"/> class.
+            </summary>
+            <param name="memberName">The name of the property to add, whose getter returns the embedded <paramref name="FiggleFont" />.</param>
+            <param name="fontName">The name of the font to use when rendering the text.</param>
+        </member>
+        <member name="T:Figgle.GenerateFiggleTextAttribute">
+            <summary>
+            Instructs a source generator to render a statically known string with a Figgle font, and to
+            make the value available via a static property of the class this attribute is applied to.
+            </summary>
+            <remarks>
+            <para>
+            This attribute is processed by a source generator in the <c>Figgle.Generator</c> package.
+            </para>
+            <para>
+            This source generator will embed rendered text directly into your code at compile time.
+            If the text you want Figgle to render is statically known at compile time, you should use
+            this generator and avoid shipping any Figgle binaries.
+            </para>
+            <para>
+            If the text you want Figgle to render is not statically known at compile time, you should
+            use <see cref="T:Figgle.EmbedFiggleFontAttribute" /> instead.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Figgle.GenerateFiggleTextAttribute.MemberName">
+            <summary>
+            The name of the property to add, whose getter returns the rendered <see cref="P:Figgle.GenerateFiggleTextAttribute.SourceText" />.
+            </summary>
+        </member>
+        <member name="P:Figgle.GenerateFiggleTextAttribute.FontName">
+            <summary>
+            The name of the font to use when rendering the text.
+            </summary>
+        </member>
+        <member name="P:Figgle.GenerateFiggleTextAttribute.SourceText">
+            <summary>
+            The text to render using the specified font.
+            </summary>
+        </member>
+        <member name="M:Figgle.GenerateFiggleTextAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Figgle.GenerateFiggleTextAttribute"/> class.
+            </summary>
+            <param name="memberName">The name of the property to add, whose getter will return the rendered <paramref name="sourceText" />.</param>
+            <param name="fontName">The name of the font to use when rendering the text.</param>
+            <param name="sourceText">The text to render using the specified font.</param>
+        </member>
+    </members>
+</doc>

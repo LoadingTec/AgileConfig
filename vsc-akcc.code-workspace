@@ -11,6 +11,12 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../../../nginx-1.30.0"
+		},
+		{
+			"path": "src/AgileConfig.Server.UI/react-ui-antd/public/htmls"
 		}
 	],
 	"settings": {}

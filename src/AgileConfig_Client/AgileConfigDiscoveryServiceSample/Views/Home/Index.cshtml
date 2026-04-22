@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">service list</h1>
+    <table class="table">
+        <tr>
+            <th>Service ID</th>
+            <th>Service Name</th>
+            <th>Ip</th>
+            <th>Port</th>
+            <th>Status</th>
+        </tr>
+           @{
+        foreach(dynamic service in ViewBag.services)
+        {
+            <tr >
+              <Td>
+                @service.ServiceId
+            </Td>
+            <Td>
+                @service.ServiceName
+            </Td>
+            <Td>
+                @service.Ip
+            </Td>
+            <Td>
+                @service.Port
+            </Td>
+             <Td>
+                @service.Status
+            </Td>
+            </tr>
+        }
+    }
+    </table>
+
+    <p>
+       _ds.RandomOne("user_center").AsHttpHost(): @ViewBag.userCenterBaseUrl
+    </p>
+ 
+</div>

@@ -7,7 +7,10 @@
 			"path": "src/AgileConfig.Server.Apisite"
 		},
 		{
-			"path": "../AgileConfig_Client/AgileConfigConsoleSample"
+			"path": "src/AgileConfig_Client"
+		},
+		{
+			"path": "."
 		}
 	],
 	"settings": {}

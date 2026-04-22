@@ -4,29 +4,29 @@ C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig.Server.Apisite\b
 
 dotnet AgileConfig.Server.Apisite.dll
 
-
-
-
-
 PS C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig.Server.Apisite\bin\Release\net10.0\publish
 
-# AgileConfig
+- 已经支持nssm 在Windows上服务的方式部署
 
-[Member project of .NET Core Community](https://github.com/dotnetcore)
-GitHub stars
-Nuget
-Nuget
-Docker image
-GitHub license
-build workflow
-[package workflow](https://github.com/dotnetcore/AgileConfig/actions/workflows/release-xxx.yml)
-Commit Date
+解决方案：
 
-# [English](https://github.com/kklldog/AgileConfig/blob/master/README_EN.md) | [中文看这里](https://github.com/kklldog/AgileConfig/blob/master/README_CN.md)
+C:\Users\Administrator\source\repos\AgileConfig\vsc-akcc.code-workspace
 
-This is a lightweight configuration center based on .net core . It is easy to deploy , easy to learn , easy to use .
 
-## 😍Features
+
+服务端节点
+
+C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig.Server.Apisite
+
+web前端
+
+C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig.Server.UI\react-ui-antd
+
+示例项目
+
+C:\Users\Administrator\source\repos\AgileConfig\src\AgileConfig_Client
+
+# 基本特性总结：
 
 1. easy to deploy (docker or IIS)
 2. support distributed deploy
@@ -40,6 +40,8 @@ This is a lightweight configuration center based on .net core . It is easy to de
 10. support OpenTelemetry
 11. also can be use as a simple service register center
 12. role base user permission control
+
+实例说明：
 
 🔆🔆🔆Demo Project ：[AgileConfig Server Demo](http://agileconfig_server.xbaby.xyz)   name.pwd= admin/123456🔆🔆🔆  
 client project ：[AgileConfig_Client](https://github.com/kklldog/AgileConfig_Client)  

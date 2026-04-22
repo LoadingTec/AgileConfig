@@ -1,0 +1,264 @@
+﻿using AgileConfig.Client.MessageHandlers;
+using AgileConfig.Client.Utils;
+using AgileConfig.Protocol;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace AgileConfig.Client.RegisterCenter
+{
+    public class DiscoveryService : IDiscoveryService
+    {
+        private List<ServiceInfo> _services;
+        private IConfigClient _configClient;
+        private ILogger _logger;
+        private ConfigClientOptions _options
+        {
+            get
+            {
+                return _configClient.Options;
+            }
+        }
+        private bool _isLoadFromLocal;
+
+        private string LocalCacheFileName => Path.Combine(_options?.CacheDirectory, $"{_options?.AppId}.agileconfig.client.services.cache");
+
+        /// <summary>
+        /// service list be reloaded
+        /// </summary>
+        public event Action ReLoaded;
+
+        public DiscoveryService(IConfigClient client, ILoggerFactory loggerFactory)
+        {
+            Instance = this;
+
+            _services = new List<ServiceInfo>();
+            _configClient = client;
+            _logger = loggerFactory.CreateLogger<DiscoveryService>();
+            RefreshAsync().GetAwaiter().GetResult();
+            MessageCenter.Subscribe += (str) =>
+            {
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (RegisterCenterActionMessageHandler.Hit(str))
+                    {
+                        var act = JsonSerializer.Deserialize<ActionMessage>(str, MsJsonSerializerOption.Default);
+                        if (act == null)
+                        {
+                            return;
+                        }
+
+                        if (act.Action == ActionConst.Reload)
+                        {
+                            _ = RefreshAsync();
+                            return;
+                        }
+                        if (act.Action == ActionConst.Ping)
+                        {
+                            var ver = act.Data ?? "";
+                            if (!ver.Equals(DataVersion, StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                _logger.LogInformation($"server return service infos version {ver} is different from local version {DataVersion} so refresh .");
+                                // Refresh immediately if the server version differs from the local one.
+                                _ = RefreshAsync();
+                            }
+                            return;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, $"DiscoveryService handle receive msg error . message: {str}");
+                }
+            };
+        }
+
+        /// <summary>
+        /// Indicates whether the service list was loaded from the local cache.
+        /// </summary>
+        public bool IsLoadFromLocal
+        {
+            get
+            {
+                return _isLoadFromLocal;
+            }
+        }
+
+        public string DataVersion { get; private set; }
+
+
+        public List<ServiceInfo> Services
+        {
+            get
+            {
+                return _services;
+            }
+        }
+
+        public List<ServiceInfo> HealthyServices
+        {
+            get
+            {
+                return _services.Where(x => x.Status == ServiceStatus.Healthy).ToList();
+            }
+        }
+
+        public List<ServiceInfo> UnHealthyServices
+        {
+            get
+            {
+                return _services.Where(x => x.Status == ServiceStatus.Unhealthy).ToList();
+            }
+        }
+
+        public static IDiscoveryService Instance
+        {
+            get; private set;
+        }
+
+        public async Task RefreshAsync()
+        {
+            int failCount = 0;
+            var random = new RandomServers(_configClient.Options.Nodes);
+            while (!random.IsComplete)
+            {   // Try removing one random node at a time.
+                var host = random.Next();
+                var getUrl = host + (host.EndsWith("/") ? "" : "/") + $"api/registercenter/services";
+                try
+                {
+                    var resp = await HttpUtil.GetAsync(getUrl, null, null);
+
+                    if (resp.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var content = await HttpUtil.GetResponseContentAsync(resp);
+                        if (!string.IsNullOrEmpty(content))
+                        {
+                            var result = JsonSerializer.Deserialize<List<ServiceInfo>>(content, MsJsonSerializerOption.Default);
+                            if (result != null)
+                            {
+                                this._isLoadFromLocal = false;
+                                this._services = result;
+                                this.DataVersion = GenerateMD5(result);
+                                WriteServiceInfosToLocal(content);
+                                _logger.LogTrace($"DiscoveryService refresh all services success by API {getUrl} , status code {resp.StatusCode} .");
+                                ReLoaded?.Invoke();
+                            }
+                        }
+                        break; 
+                        //[{ "serviceId":"123","serviceName":"213","ip":"www.baidu.com","port":null,"metaData":[],"status":1},{ "serviceId":"http://localhost:5000/","serviceName":"http://localhost:5000/","ip":"http://localhost:5000/","port":null,"metaData":[],"status":1},{ "serviceId":"test_app_service_02","serviceName":"test_client","ip":"127.0.0.1","port":5002,"metaData":["this is a test client"],"status":1}]
+                    }
+                    else
+                    {
+                        _logger.LogTrace($"DiscoveryService refresh all services fail , url {getUrl} , status code {resp.StatusCode} .");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    failCount++;
+                    _logger.LogError(ex, "DiscoveryService refresh all services error .");
+                }
+            }
+            if (failCount == random.ServerCount)
+            {
+                LoadServicesFromLocal();
+            }
+        }
+
+        /// <summary>
+        /// Load service information from the local cache file.
+        /// </summary>
+        private void LoadServicesFromLocal()
+        {
+            var fileContent = ReadServiceInfosContentFromLocal();
+            if (!string.IsNullOrEmpty(fileContent))
+            {
+                var result = JsonSerializer.Deserialize<List<ServiceInfo>>(fileContent, MsJsonSerializerOption.Default);
+                if (result != null)
+                {
+                    this._services = result;
+                    this.DataVersion = GenerateMD5(result);
+                    this._isLoadFromLocal = true;
+
+                    _logger?.LogTrace("client load all service infos from local file .");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure the cache directory exists.
+        /// </summary>
+        private void EnsureCacheDir()
+        {
+            if (!string.IsNullOrWhiteSpace(_options.CacheDirectory) && !Directory.Exists(_options.CacheDirectory))
+            {
+                Directory.CreateDirectory(_options.CacheDirectory);
+            }
+        }
+
+        private void WriteServiceInfosToLocal(string content)
+        {
+            if (!_options.CacheEnabled)
+            {
+                return;
+            }
+            try
+            {
+                if (string.IsNullOrEmpty(content))
+                {
+                    return;
+                }
+                EnsureCacheDir();
+                File.WriteAllText(LocalCacheFileName, content);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "client try to cache all service infos to local but failed .");
+            }
+        }
+
+        /// <summary>
+        /// Try to read cached service information from a local file.
+        /// </summary>
+        /// <returns></returns>
+        private string ReadServiceInfosContentFromLocal()
+        {
+            EnsureCacheDir();
+            if (!File.Exists(LocalCacheFileName))
+            {
+                return "";
+            }
+
+            return File.ReadAllText(LocalCacheFileName);
+        }
+
+        private string GenerateMD5(List<ServiceInfo> services)
+        {
+            var plain = new StringBuilder();
+            foreach (var serviceInfo in services.OrderBy(x => x.ServiceId, StringComparer.Ordinal))
+            {
+                var metaDataStr = "";
+                if (serviceInfo.MetaData != null)
+                {
+                    metaDataStr = string.Join(",", serviceInfo.MetaData.OrderBy(x => x, StringComparer.Ordinal));
+                }
+                plain.Append($"{serviceInfo.ServiceId}&{serviceInfo.ServiceName}&{serviceInfo.Ip}&{serviceInfo.Port}&{(int)serviceInfo.Status}&{metaDataStr}&");
+            }
+
+            var txt = plain.ToString();
+            var md5 = Encrypt.Md5(txt);
+
+            return md5;
+        }
+
+    }
+}

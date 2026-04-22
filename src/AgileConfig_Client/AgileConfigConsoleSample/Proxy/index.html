@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PAC 服务</title>
+  <style>
+    body { font-family: "Segoe UI", system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    code { background: #f3f3f3; padding: 0.2em 0.4em; border-radius: 4px; word-break: break-all; }
+    .box { border: 1px solid #ccc; padding: 1rem; border-radius: 8px; max-width: 52rem; }
+  </style>
+</head>
+<body>
+  <h1>PAC 自动配置</h1>
+  <div class="box">
+    <p><strong>PAC 地址入口</strong>（复制到 Windows「设置 → 网络和 Internet → 代理 → 使用设置脚本」）：</p>
+    <p><code id="pac"></code></p>
+    <p>局域网内其他设备请把主机名换成<strong>本机在内网的 IP</strong>（与打开本页时地址栏一致即可）。</p>
+  </div>
+  <script>
+    document.getElementById("pac").textContent = location.origin + "/proxy.pac";
+  </script>
+</body>
+</html>

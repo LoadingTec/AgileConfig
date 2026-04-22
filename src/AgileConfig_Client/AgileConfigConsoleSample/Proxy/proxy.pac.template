@@ -1,0 +1,4 @@
+function FindProxyForURL(url, host) {
+  // 替换 {{PROXY_HOST}} 与 {{PROXY_PORT}} 为实际对客户端可见的地址与 v2ray HTTP 入站端口
+  return "PROXY {{PROXY_HOST}}:{{PROXY_PORT}}; DIRECT";
+}

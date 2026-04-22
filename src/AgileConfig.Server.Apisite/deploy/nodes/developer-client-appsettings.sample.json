@@ -1,0 +1,10 @@
+{
+  "AgileConfig": {
+    "appId": "在控制台「应用」中创建后复制",
+    "secret": "同上",
+    "nodes": "http://127.0.0.1:8051,http://127.0.0.1:8052,http://127.0.0.1:8053",
+    "name": "your_service_name",
+    "tag": "tag1",
+    "env": "DEV"
+  }
+}

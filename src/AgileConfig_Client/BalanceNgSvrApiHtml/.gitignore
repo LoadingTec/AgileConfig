@@ -1,0 +1,6 @@
+**/bin/
+**/obj/
+**/uploads/
+*.user
+*.suo
+deploy/update-config.ps1

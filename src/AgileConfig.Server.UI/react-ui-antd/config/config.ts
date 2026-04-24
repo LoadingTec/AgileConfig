@@ -41,6 +41,8 @@ export default defineConfig({
     basePath: '/a/',
   },
   esbuild: {},
-  publicPath: '/',
+  // 经 Nginx 挂在子路径（如 /config/ui/）时建议：set UI_PUBLIC_PATH=/config/ui/ && npm run build，使 runtime 资源与 /static 均带前缀；
+  // 若仍用 publicPath=/，须在 Nginx 为 /static/、umi/chunk 等提供 wwwroot/ui 映射（见 deploy/nodes/nginx-8538-upstream-agileconfig.conf）。
+  publicPath: process.env.UI_PUBLIC_PATH || '/',
   runtimePublicPath: true
 });

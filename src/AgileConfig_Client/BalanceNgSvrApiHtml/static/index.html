@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>动静分离示例 — 表单与上传</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 0.75rem; }
+    input[type="text"], textarea { width: 100%; box-sizing: border-box; padding: 0.35rem; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 1rem; overflow: auto; }
+    .hint { color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>静态页（由 Nginx 直接出磁盘）</h1>
+  <p class="hint">提交到同源 <code>/api/submit</code>，由 Nginx 反代到 ASP.NET Core，实现<strong>动</strong>与<strong>静</strong>分离。</p>
+
+  <form id="f">
+    <label>名称 <input name="name" type="text" required placeholder="必填" /></label>
+    <label>备注 <textarea name="remark" rows="3" placeholder="可选"></textarea></label>
+    <label>附件 <input name="file" type="file" /></label>
+    <button type="submit">提交（multipart）</button>
+  </form>
+
+  <h2>响应</h2>
+  <pre id="out">（尚未提交）</pre>
+
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const out = document.getElementById('out');
+      out.textContent = '请求中…';
+      try {
+        const r = await fetch('/api/submit', { method: 'POST', body: fd });
+        const text = await r.text();
+        out.textContent = r.status + ' ' + r.statusText + '\n' + text;
+      } catch (err) {
+        out.textContent = '网络错误: ' + err;
+      }
+    });
+  </script>
+</body>
+</html>

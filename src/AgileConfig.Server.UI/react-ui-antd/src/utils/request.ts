@@ -1,4 +1,4 @@
-﻿/** Request utility for network calls. Detailed API docs: https://github.com/umijs/umi-request */
+/** Request utility for network calls. Detailed API docs: https://github.com/umijs/umi-request */
 import { extend, RequestOptionsInit } from 'umi-request';
 import { notification } from 'antd';
 import { getToken } from './authority';
@@ -73,7 +73,9 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
   };
 };
 
-let requestPrefix = '';
+// 生产环境必须为根路径「/」：控制台挂在 /config/ui/ 时，相对路径 Home/xxx 会变成 /config/ui/Home/xxx，
+// 经 Nginx 进静态 location 后 404；前缀「/」得到 /Home/xxx，与 location ~* ^/(admin|api|Home|...) 反代一致。
+let requestPrefix = '/';
 const { NODE_ENV } = process.env;
 if (NODE_ENV === 'development') {
   requestPrefix = 'http://localhost:5000/';

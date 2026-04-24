@@ -123,11 +123,12 @@
       <span class="badge">暗场成像 · 全晶圆扫描 · 智能判图</span>
 
       <nav class="nav-grid" aria-label="系统快捷入口">
-        <a href="/config/ui#/"><span>配置中心</span><span class="sub">config → LB → :8051/:8052/:8053</span></a>
+        <!-- 须用 nginx -p C:/nginx-1.30.0/ 启动，否则会加载错 conf；入口 /config/ui/ 由 root+rewrite 出静态 -->
+        <a href="/config/ui/#/"><span>配置中心</span><span class="sub">8538 → upstream → 8051 / 8052 / 8053</span></a>
         <a href="/download"><span>下载更新</span><span class="sub">download</span></a>
-        <a href="/logseq/"><span>日志中心</span><span class="sub">logseq → :5341</span></a>
+        <a href="/logseq"><span>日志中心</span><span class="sub">logseq → :5341</span></a>
         <a href="/admin"><span>管理后台</span><span class="sub">admin → :9090</span></a>
-        <a href="/monitor/"><span>监控面板</span><span class="sub">monitor → :8090</span></a>
+        <a href="/monitor"><span>监控面板</span><span class="sub">monitor → :8090</span></a>
       </nav>
     </div>
   </header>
